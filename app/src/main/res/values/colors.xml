@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Tons Principais -->
+    <color name="primary_eco">#1D9E75</color>
+    <color name="primary_eco_dark">#0B3D2E</color>
+    <color name="primary_eco_light">#26C694</color>
+
+    <!-- Fundo e Superfícies -->
+    <color name="bg_dark">#0A1210</color>
+    <color name="surface_emerald">#12241F</color>
+    <color name="surface_dark">#1A1A1A</color>
+    <color name="surface_card">#242424</color>
+
+    <!-- Cores de Status (Alertas) -->
+    <color name="alert_danger_bg">#2D1616</color>
+    <color name="alert_danger_text">#E24B4A</color>
+    <color name="alert_warning_bg">#2D2416</color>
+    <color name="alert_warning_text">#BA7517</color>
+    <color name="alert_info_bg">#161D2D</color>
+    <color name="alert_info_text">#185FA5</color>
+
+    <!-- Texto -->
+    <color name="text_white">#FFFFFF</color>
+    <color name="text_gray">#888780</color>
+    <color name="green_positive">#00E676</color>
+    <color name="red_negative">#FF5252</color>
+
+    <color name="black">#FF000000</color>
+    <color name="white">#FFFFFFFF</color>
+    <!-- Cores para Categorias no Gráfico -->
+    <color name="chart_food">#FFEB3B</color>      <!-- Amarelo (Alimentação) -->
+    <color name="chart_bills">#1A66A4</color>     <!-- Azul -->
+    <color name="chart_transport">#1A66A4</color> <!-- Azul (Transporte) -->
+    <color name="chart_leisure">#8E44AD</color>   <!-- Roxo (Lazer) -->
+    <color name="chart_health">#1D9E75</color>    <!-- Verde (Saúde) -->
+    <color name="chart_others">#808080</color>    <!-- Cinza -->
+
+    <color name="invest_purple">#BB86FC</color>
+    <color name="invest_purple_dark">#3700B3</color>
+
+    <color name="alert_success_bg">#0D2B22</color>
+    <color name="alert_success_text">#1D9E75</color>
+</resources>

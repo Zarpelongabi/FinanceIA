@@ -1,0 +1,10 @@
+<resources>
+    <string name="app_name">FinanceAI</string>
+    <string name="total_spending">Total Spending</string>
+    <string name="recent_alerts">Recent Alerts</string>
+    <string name="recent_transactions">Recent Transactions</string>
+    <string name="scan_receipt">Scan Receipt</string>
+    <string name="your_savings_goals">Your Savings Goals</string>
+    <string name="add_new_goal">Add New Goal</string>
+    <string name="take_photo">Take Photo</string>
+</resources>

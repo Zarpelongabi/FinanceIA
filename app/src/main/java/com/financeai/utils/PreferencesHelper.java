@@ -1,0 +1,92 @@
+package com.financeai.utils;
+
+import android.content.Context;
+import android.content.SharedPreferences;
+
+public class PreferencesHelper {
+
+    private static final String PREFS_NAME = "financeai_prefs";
+    private static final String KEY_MONTHLY_BUDGET = "monthly_budget";
+    private static final String KEY_ECONOMY_MODE = "economy_mode";
+    private static final String KEY_DARK_THEME = "dark_theme";
+    private static final String KEY_USER_NAME = "user_name";
+    private static final String KEY_NOTIFICATIONS_ENABLED = "notifications_enabled";
+    private static final String KEY_SCORE = "user_score";
+    private static final String KEY_FIRST_RUN = "first_run";
+    private static final String KEY_BALANCE = "current_balance";
+
+    private static SharedPreferences getPrefs(Context context) {
+        return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+    }
+
+    public static double getMonthlyBudget(Context context) {
+        return Double.longBitsToDouble(getPrefs(context).getLong(KEY_MONTHLY_BUDGET,
+            Double.doubleToLongBits(3000.0)));
+    }
+
+    public static void setMonthlyBudget(Context context, double budget) {
+        getPrefs(context).edit()
+            .putLong(KEY_MONTHLY_BUDGET, Double.doubleToLongBits(budget))
+            .apply();
+    }
+
+    public static boolean isEconomyMode(Context context) {
+        return getPrefs(context).getBoolean(KEY_ECONOMY_MODE, false);
+    }
+
+    public static void setEconomyMode(Context context, boolean enabled) {
+        getPrefs(context).edit().putBoolean(KEY_ECONOMY_MODE, enabled).apply();
+    }
+
+    public static boolean isDarkTheme(Context context) {
+        return getPrefs(context).getBoolean(KEY_DARK_THEME, false);
+    }
+
+    public static void setDarkTheme(Context context, boolean enabled) {
+        getPrefs(context).edit().putBoolean(KEY_DARK_THEME, enabled).apply();
+    }
+
+    public static String getUserName(Context context) {
+        return getPrefs(context).getString(KEY_USER_NAME, "Usuário");
+    }
+
+    public static void setUserName(Context context, String name) {
+        getPrefs(context).edit().putString(KEY_USER_NAME, name).apply();
+    }
+
+    public static boolean isNotificationsEnabled(Context context) {
+        return getPrefs(context).getBoolean(KEY_NOTIFICATIONS_ENABLED, true);
+    }
+
+    public static void setNotificationsEnabled(Context context, boolean enabled) {
+        getPrefs(context).edit().putBoolean(KEY_NOTIFICATIONS_ENABLED, enabled).apply();
+    }
+
+    public static int getUserScore(Context context) {
+        return getPrefs(context).getInt(KEY_SCORE, 0);
+    }
+
+    public static void addScore(Context context, int points) {
+        int current = getUserScore(context);
+        getPrefs(context).edit().putInt(KEY_SCORE, current + points).apply();
+    }
+
+    public static boolean isFirstRun(Context context) {
+        return getPrefs(context).getBoolean(KEY_FIRST_RUN, true);
+    }
+
+    public static void setFirstRunDone(Context context) {
+        getPrefs(context).edit().putBoolean(KEY_FIRST_RUN, false).apply();
+    }
+
+    public static double getCurrentBalance(Context context) {
+        return Double.longBitsToDouble(getPrefs(context).getLong(KEY_BALANCE,
+            Double.doubleToLongBits(0.0)));
+    }
+
+    public static void setCurrentBalance(Context context, double balance) {
+        getPrefs(context).edit()
+            .putLong(KEY_BALANCE, Double.doubleToLongBits(balance))
+            .apply();
+    }
+}
