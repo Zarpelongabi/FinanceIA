@@ -16,6 +16,7 @@ public class Category {
     private double monthlyLimit;
     private boolean isCustom;
     private String keywords;    // JSON array de palavras-chave para auto-categorização
+    private String iconPath;    // Caminho para a imagem personalizada (null se usar emoji)
 
     public Category() {}
 
@@ -43,6 +44,12 @@ public class Category {
                 "farmacia,drogaria,medico,consulta,hospital,clinica,plano de saude,droga raia"),
             createDefault("Educação", "📚", "#533AB7", 300.0,
                 "escola,faculdade,curso,livro,papelaria,material escolar,alura,udemy"),
+            createDefault("Investimento", "💰", "#4CAF50", 0.0, 
+                "investimento,corretora,tesouro,acoes,fundo,xp,btg,nuinvest"),
+            createDefault("Poupança", "🏦", "#2196F3", 0.0, 
+                "poupanca,caixa,banco"),
+            createDefault("Reserva", "🛡️", "#FF9800", 0.0, 
+                "reserva,emergencia,fundo reserva"),
             createDefault("Outros", "📦", "#888780", 0.0, "")
         };
     }
@@ -75,6 +82,9 @@ public class Category {
 
     public String getKeywords() { return keywords; }
     public void setKeywords(String keywords) { this.keywords = keywords; }
+
+    public String getIconPath() { return iconPath; }
+    public void setIconPath(String iconPath) { this.iconPath = iconPath; }
 
     public String getDisplayName() {
         return emoji + " " + name;

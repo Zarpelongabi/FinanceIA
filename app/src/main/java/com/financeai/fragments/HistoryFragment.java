@@ -56,6 +56,12 @@ public class HistoryFragment extends Fragment {
     }
 
     private void loadHistory() {
+        db.categoryDao().getAllCategories().observe(getViewLifecycleOwner(), categories -> {
+            if (categories != null) {
+                adapter.setCategories(categories);
+            }
+        });
+
         db.transactionDao().getAllTransactions().observe(getViewLifecycleOwner(), transactions -> {
             if (transactions != null) {
                 adapter.setTransactions(transactions);

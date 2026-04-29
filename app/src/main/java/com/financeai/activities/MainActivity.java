@@ -14,20 +14,19 @@ import com.financeai.utils.PreferencesHelper;
 public class MainActivity extends AppCompatActivity {
 
     private ViewPager2 viewPager;
-    private TextView menuHome, menuHistory, menuGoals;
-    private android.widget.ImageButton btnInvestments;
+    private android.widget.ImageButton btnNavHome, btnNavSummary, btnNavHistory, btnNavGoals, btnNavPredicted;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        // Aplica a cor personalizada antes de criar a view
+        applyCustomColor();
+        
         super.onCreate(savedInstanceState);
         
-        getWindow().getDecorView().setSystemUiVisibility(
-            View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-        );
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
-
         if (PreferencesHelper.isDarkTheme(this)) {
-            setTheme(R.style.Theme_FinanceAI_Dark);
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_YES);
+        } else {
+            androidx.appcompat.app.AppCompatDelegate.setDefaultNightMode(androidx.appcompat.app.AppCompatDelegate.MODE_NIGHT_NO);
         }
         setContentView(R.layout.activity_main);
 
@@ -38,13 +37,14 @@ public class MainActivity extends AppCompatActivity {
 
     private void initViews() {
         viewPager = findViewById(R.id.view_pager);
-        menuHome = findViewById(R.id.menu_home);
-        menuHistory = findViewById(R.id.menu_history);
-        menuGoals = findViewById(R.id.menu_goals);
-        btnInvestments = findViewById(R.id.btn_investments);
+        btnNavHome = findViewById(R.id.btn_nav_home);
+        btnNavSummary = findViewById(R.id.btn_nav_summary);
+        btnNavHistory = findViewById(R.id.btn_nav_history);
+        btnNavGoals = findViewById(R.id.btn_nav_goals);
+        btnNavPredicted = findViewById(R.id.btn_nav_predicted);
 
-        btnInvestments.setImageResource(R.drawable.investimento);
-        btnInvestments.setOnClickListener(v -> startActivity(new Intent(this, InvestimentosActivity.class)));
+        findViewById(R.id.btn_investments).setOnClickListener(v -> startActivity(new Intent(this, InvestimentosActivity.class)));
+        findViewById(R.id.btn_settings).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private void setupViewPager() {
@@ -60,37 +60,68 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupMenu() {
-        menuHome.setOnClickListener(v -> viewPager.setCurrentItem(0));
-        menuHistory.setOnClickListener(v -> viewPager.setCurrentItem(1));
-        menuGoals.setOnClickListener(v -> viewPager.setCurrentItem(2));
+        btnNavHome.setOnClickListener(v -> viewPager.setCurrentItem(0));
+        btnNavSummary.setOnClickListener(v -> viewPager.setCurrentItem(1));
+        btnNavHistory.setOnClickListener(v -> viewPager.setCurrentItem(2));
+        btnNavGoals.setOnClickListener(v -> viewPager.setCurrentItem(3));
+        btnNavPredicted.setOnClickListener(v -> viewPager.setCurrentItem(4));
     }
 
     private void updateMenuHighlight(int position) {
-        menuHome.setAlpha(0.6f);
-        menuHistory.setAlpha(0.6f);
-        menuGoals.setAlpha(0.6f);
+        int primaryColor = PreferencesHelper.getPrimaryColor(this);
         
-        menuHome.setTextColor(Color.WHITE);
-        menuHistory.setTextColor(Color.WHITE);
-        menuGoals.setTextColor(Color.WHITE);
+        btnNavHome.setAlpha(0.6f);
+        btnNavSummary.setAlpha(0.6f);
+        btnNavHistory.setAlpha(0.6f);
+        btnNavGoals.setAlpha(0.6f);
+        btnNavPredicted.setAlpha(0.6f);
+
+        btnNavHome.setColorFilter(Color.WHITE);
+        btnNavSummary.setColorFilter(Color.WHITE);
+        btnNavHistory.setColorFilter(Color.WHITE);
+        btnNavGoals.setColorFilter(Color.WHITE);
+        btnNavPredicted.setColorFilter(Color.WHITE);
 
         switch (position) {
             case 0:
-                menuHome.setAlpha(1.0f);
-                menuHome.setTextColor(getResources().getColor(R.color.primary_eco));
+                btnNavHome.setAlpha(1.0f);
+                btnNavHome.setColorFilter(primaryColor);
                 break;
             case 1:
-                menuHistory.setAlpha(1.0f);
-                menuHistory.setTextColor(getResources().getColor(R.color.primary_eco));
+                btnNavSummary.setAlpha(1.0f);
+                btnNavSummary.setColorFilter(primaryColor);
                 break;
             case 2:
-                menuGoals.setAlpha(1.0f);
-                menuGoals.setTextColor(getResources().getColor(R.color.primary_eco));
+                btnNavHistory.setAlpha(1.0f);
+                btnNavHistory.setColorFilter(primaryColor);
+                break;
+            case 3:
+                btnNavGoals.setAlpha(1.0f);
+                btnNavGoals.setColorFilter(primaryColor);
+                break;
+            case 4:
+                btnNavPredicted.setAlpha(1.0f);
+                btnNavPredicted.setColorFilter(primaryColor);
                 break;
         }
     }
 
     public void goToPage(int page) {
         viewPager.setCurrentItem(page);
+    }
+
+    private void applyCustomColor() {
+        int primaryColor = PreferencesHelper.getPrimaryColor(this);
+        int darkColor = PreferencesHelper.getPrimaryDarkColor(this);
+        int surfaceColor = PreferencesHelper.getSurfaceColor(this);
+
+        // Aplica a cor na StatusBar
+        getWindow().setStatusBarColor(darkColor);
+
+        // Se houver um container de menu inferior, podemos pintar o fundo dele também
+        View bottomNav = findViewById(R.id.floating_menu_container);
+        if (bottomNav != null) {
+            bottomNav.setBackgroundColor(surfaceColor);
+        }
     }
 }

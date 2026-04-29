@@ -156,7 +156,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:orientation="horizontal"
-                android:weightSum="2">
+                android:weightSum="3">
 
                 <RadioButton
                     android:id="@+id/rb_only_this_month"
@@ -167,17 +167,30 @@
                     android:textColor="@color/white"
                     android:buttonTint="#26C694"
                     android:checked="true"
-                    android:paddingStart="8dp" />
+                    android:paddingStart="4dp"
+                    android:textSize="12sp" />
 
                 <RadioButton
                     android:id="@+id/rb_fixed"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="Fixo Mensal"
+                    android:text="Fixo"
                     android:textColor="@color/white"
                     android:buttonTint="#26C694"
-                    android:paddingStart="8dp" />
+                    android:paddingStart="4dp"
+                    android:textSize="12sp" />
+
+                <RadioButton
+                    android:id="@+id/rb_predicted"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="Previsto"
+                    android:textColor="@color/white"
+                    android:buttonTint="#26C694"
+                    android:paddingStart="4dp"
+                    android:textSize="12sp" />
             </RadioGroup>
 
             <View

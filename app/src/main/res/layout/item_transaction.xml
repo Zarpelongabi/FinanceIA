@@ -59,4 +59,17 @@
         android:textStyle="bold"
         tools:text="-R$ 34,90" />
 
+    <ImageButton
+        android:id="@+id/btn_confirm_predicted"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        android:layout_marginStart="8dp"
+        android:padding="8dp"
+        android:scaleType="centerInside"
+        android:background="?attr/selectableItemBackgroundBorderless"
+        android:src="@android:drawable/checkbox_on_background"
+        android:visibility="gone"
+        app:tint="@color/primary_eco"
+        tools:visibility="visible" />
+
 </LinearLayout>

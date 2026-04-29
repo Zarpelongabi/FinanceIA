@@ -14,6 +14,7 @@ public class PreferencesHelper {
     private static final String KEY_SCORE = "user_score";
     private static final String KEY_FIRST_RUN = "first_run";
     private static final String KEY_BALANCE = "current_balance";
+    private static final String KEY_PRIMARY_COLOR = "primary_color";
 
     private static SharedPreferences getPrefs(Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -88,5 +89,44 @@ public class PreferencesHelper {
         getPrefs(context).edit()
             .putLong(KEY_BALANCE, Double.doubleToLongBits(balance))
             .apply();
+    }
+
+    public static int getPrimaryColor(Context context) {
+        return getPrefs(context).getInt(KEY_PRIMARY_COLOR, context.getResources().getColor(com.financeai.R.color.primary_eco));
+    }
+
+    public static void setPrimaryColor(Context context, int color) {
+        getPrefs(context).edit().putInt(KEY_PRIMARY_COLOR, color).apply();
+    }
+
+    // Retorna uma versão mais clara da cor primária para gradientes e destaques
+    public static int getPrimaryLightColor(Context context) {
+        int color = getPrimaryColor(context);
+        return adjustAlpha(color, 0.7f); // 70% de opacidade ou clareamento
+    }
+
+    // Retorna uma versão mais escura da cor primária para status bar
+    public static int getPrimaryDarkColor(Context context) {
+        float[] hsv = new float[3];
+        android.graphics.Color.colorToHSV(getPrimaryColor(context), hsv);
+        hsv[2] *= 0.7f; // Reduz o brilho em 30%
+        return android.graphics.Color.HSVToColor(hsv);
+    }
+
+    // Retorna uma cor de superfície (fundo de card) baseada na cor primária (bem escura)
+    public static int getSurfaceColor(Context context) {
+        float[] hsv = new float[3];
+        android.graphics.Color.colorToHSV(getPrimaryColor(context), hsv);
+        hsv[1] *= 0.4f; // Reduz a saturação
+        hsv[2] = 0.12f; // Brilho bem baixo para ser um fundo escuro
+        return android.graphics.Color.HSVToColor(hsv);
+    }
+
+    private static int adjustAlpha(int color, float factor) {
+        int alpha = Math.round(android.graphics.Color.alpha(color) * factor);
+        int red = android.graphics.Color.red(color);
+        int green = android.graphics.Color.green(color);
+        int blue = android.graphics.Color.blue(color);
+        return android.graphics.Color.argb(alpha, red, green, blue);
     }
 }

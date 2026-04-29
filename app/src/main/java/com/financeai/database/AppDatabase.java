@@ -13,7 +13,7 @@ import com.financeai.models.Meta;
 import com.financeai.models.Transaction;
 import com.financeai.utils.Converters;
 
-@Database(entities = {Transaction.class, Category.class, Meta.class}, version = 4, exportSchema = false)
+@Database(entities = {Transaction.class, Category.class, Meta.class}, version = 6, exportSchema = false)
 @TypeConverters({Converters.class})
 public abstract class AppDatabase extends RoomDatabase {
 

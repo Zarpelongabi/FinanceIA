@@ -20,6 +20,7 @@ public class Transaction {
     private long date;
     private boolean isExpense; // true = gasto, false = receita
     private boolean isRecurring;
+    private boolean isPredicted; // Novo campo para gastos previstos
     private String receiptImagePath;
     private boolean isOcrExtracted;
     private String type; // "manual", "ocr", "voice"
@@ -69,6 +70,9 @@ public class Transaction {
 
     public boolean isRecurring() { return isRecurring; }
     public void setRecurring(boolean recurring) { isRecurring = recurring; }
+
+    public boolean isPredicted() { return isPredicted; }
+    public void setPredicted(boolean predicted) { isPredicted = predicted; }
 
     public String getReceiptImagePath() { return receiptImagePath; }
     public void setReceiptImagePath(String receiptImagePath) { this.receiptImagePath = receiptImagePath; }

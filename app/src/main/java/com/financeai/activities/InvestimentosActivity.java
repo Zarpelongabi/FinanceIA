@@ -17,10 +17,13 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.financeai.R;
 import com.financeai.adapters.MetaAdapter;
+import com.financeai.adapters.TransactionAdapter;
 import com.financeai.database.AppDatabase;
+import com.financeai.models.Category;
 import com.financeai.models.Meta;
 import com.financeai.models.Transaction;
 import com.financeai.utils.CurrencyHelper;
+import com.financeai.utils.PreferencesHelper;
 import com.financeai.utils.SpendingAnalyzer;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +32,8 @@ import java.util.concurrent.Executors;
 public class InvestimentosActivity extends AppCompatActivity {
 
     private TextView tvTotal, tvProfit, tvPoupanca, tvInvest, tvPoupancaGoals, tvDisponivelMes;
+    private RecyclerView rvHistory;
+    private TransactionAdapter historyAdapter;
     private SharedPreferences prefs;
     private AppDatabase db;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -42,8 +47,9 @@ public class InvestimentosActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         
+        int primaryColor = PreferencesHelper.getPrimaryColor(this);
         getWindow().getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_STABLE | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN);
-        getWindow().setStatusBarColor(Color.TRANSPARENT);
+        getWindow().setStatusBarColor(android.graphics.Color.TRANSPARENT);
         
         setContentView(R.layout.activity_investimentos);
 
@@ -57,6 +63,11 @@ public class InvestimentosActivity extends AppCompatActivity {
         findViewById(R.id.btn_add_poupanca).setOnClickListener(v -> showSelectMetaDialog());
         findViewById(R.id.btn_add_invest).setOnClickListener(v -> showAddDialog("invest", "Novo Investimento", null));
         findViewById(R.id.btn_investir_sobra).setOnClickListener(v -> investirSobra());
+        
+        // Aplica a cor personalizada nos botões principais
+        findViewById(R.id.btn_add_poupanca).setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor));
+        findViewById(R.id.btn_add_invest).setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor));
+        findViewById(R.id.btn_investir_sobra).setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor));
     }
 
     private void initViews() {
@@ -66,6 +77,24 @@ public class InvestimentosActivity extends AppCompatActivity {
         tvInvest = findViewById(R.id.tv_invest_value);
         tvPoupancaGoals = findViewById(R.id.tv_poupanca_goals);
         tvDisponivelMes = findViewById(R.id.tv_disponivel_mes);
+        
+        rvHistory = findViewById(R.id.rv_investment_history);
+        rvHistory.setLayoutManager(new LinearLayoutManager(this));
+        historyAdapter = new TransactionAdapter(new TransactionAdapter.OnTransactionClickListener() {
+            @Override public void onTransactionClick(Transaction transaction) {}
+            @Override public void onTransactionLongClick(Transaction transaction) {
+                new AlertDialog.Builder(InvestimentosActivity.this, R.style.Theme_FinanceAI_Dark)
+                    .setTitle("Excluir Aporte?")
+                    .setMessage("Isso removerá o registro mas você precisará ajustar o saldo manualmente se desejar.")
+                    .setPositiveButton("Excluir", (d, w) -> executor.execute(() -> {
+                        db.transactionDao().delete(transaction);
+                        loadData();
+                    }))
+                    .setNegativeButton("Cancelar", null)
+                    .show();
+            }
+        });
+        rvHistory.setAdapter(historyAdapter);
     }
 
     private void loadData() {
@@ -80,22 +109,32 @@ public class InvestimentosActivity extends AppCompatActivity {
             
             saldoDisponivelAtual = totalBalance - totalExpenses;
 
-            // O patrimônio de "Metas" agora é a soma do que já foi guardado em todas as metas
             double totalMetasGuardado = db.metaDao().getTotalMetaAtual(); 
-            float vInvest = prefs.getFloat("val_investimento", 0f); 
-
-            // Rendimentos simulados (CDB 1% e Ações/Risco 1.5%)
-            double lucroMetas = totalMetasGuardado * 0.005; // 0.5% (Segurança)
-            double lucroInvest = vInvest * 0.012; // 1.2% (Rendimento Variável)
+            // Agora somamos todos os investimentos do histórico para ser dinâmico
+            double totalInvestimentosReal = db.transactionDao().getTotalByCategoryAllTime("Investimento");
+            double totalPoupancaGeral = db.transactionDao().getTotalByCategoryAllTime("Poupança");
+            double totalReserva = db.transactionDao().getTotalByCategoryAllTime("Reserva");
+            
+            // Rendimentos simulados
+            double lucroMetas = (totalMetasGuardado + totalPoupancaGeral + totalReserva) * 0.005; 
+            double lucroInvest = totalInvestimentosReal * 0.012; 
             double lucroTotal = lucroMetas + lucroInvest;
 
+            List<Transaction> history = db.transactionDao().getInvestmentHistorySync();
+            List<Category> categories = db.categoryDao().getAllCategoriesSync();
+
             runOnUiThread(() -> {
-                tvPoupanca.setText(com.financeai.utils.CurrencyHelper.format(totalMetasGuardado));
-                tvInvest.setText(com.financeai.utils.CurrencyHelper.format(vInvest));
-                tvPoupancaGoals.setText("Patrimônio reservado para seus sonhos");
-                tvTotal.setText(com.financeai.utils.CurrencyHelper.format(totalMetasGuardado + vInvest));
+                int primaryColor = PreferencesHelper.getPrimaryColor(this);
+                tvPoupanca.setText(com.financeai.utils.CurrencyHelper.format(totalMetasGuardado + totalPoupancaGeral + totalReserva));
+                tvInvest.setText(com.financeai.utils.CurrencyHelper.format(totalInvestimentosReal));
+                tvPoupancaGoals.setText("Patrimônio reservado em metas e poupança");
+                tvTotal.setText(com.financeai.utils.CurrencyHelper.format(totalMetasGuardado + totalPoupancaGeral + totalReserva + totalInvestimentosReal));
+                tvTotal.setTextColor(primaryColor);
                 tvProfit.setText(String.format("+ %s rendimento est./mês", com.financeai.utils.CurrencyHelper.format(lucroTotal)));
                 tvDisponivelMes.setText(com.financeai.utils.CurrencyHelper.format(Math.max(0, saldoDisponivelAtual)));
+                
+                historyAdapter.setCategories(categories);
+                historyAdapter.setTransactions(history);
                 
                 View btnSobra = findViewById(R.id.btn_investir_sobra);
                 if (btnSobra != null) {
@@ -131,6 +170,7 @@ public class InvestimentosActivity extends AppCompatActivity {
                 rv.setAdapter(adapter);
 
                 view.findViewById(R.id.btn_cancel_selection).setOnClickListener(v -> dialog.dismiss());
+                ((TextView)view.findViewById(R.id.tv_dialog_title)).setTextColor(PreferencesHelper.getPrimaryColor(this));
                 dialog.show();
             });
         });
@@ -138,16 +178,31 @@ public class InvestimentosActivity extends AppCompatActivity {
 
     private void showAddDialog(String key, String title, Meta targetMeta) {
         View view = LayoutInflater.from(this).inflate(R.layout.dialog_add_goal, null);
+        EditText etTitle = view.findViewById(R.id.et_goal_title);
         EditText etValue = view.findViewById(R.id.et_goal_target);
         TextView tvMonthly = view.findViewById(R.id.tv_monthly_saving);
         TextView tvDesc = view.findViewById(R.id.tv_recommendation_desc);
         TextView tvRecTitle = view.findViewById(R.id.tv_rec_title);
         
         ((TextView)view.findViewById(R.id.tv_dialog_title)).setText(title);
+        ((TextView)view.findViewById(R.id.tv_dialog_title)).setTextColor(PreferencesHelper.getPrimaryColor(this));
         
-        // Esconde campos de criação para o modo de Aporte
-        view.findViewById(R.id.til_goal_title).setVisibility(View.GONE);
-        view.findViewById(R.id.til_goal_deadline).setVisibility(View.GONE);
+        // Customização completa para novos investimentos
+        if (targetMeta == null) {
+            view.findViewById(R.id.til_goal_title).setVisibility(View.VISIBLE);
+            view.findViewById(R.id.til_goal_deadline).setVisibility(View.GONE);
+            
+            if (key.equals("invest")) {
+                ((com.google.android.material.textfield.TextInputLayout)view.findViewById(R.id.til_goal_title)).setHint("Onde está investindo?");
+                etTitle.setText("CDB / Ações");
+            } else {
+                ((com.google.android.material.textfield.TextInputLayout)view.findViewById(R.id.til_goal_title)).setHint("Identificação da Reserva");
+                etTitle.setText("Reserva de Emergência");
+            }
+        } else {
+            view.findViewById(R.id.til_goal_title).setVisibility(View.GONE);
+            view.findViewById(R.id.til_goal_deadline).setVisibility(View.GONE);
+        }
         
         // Configura Recomendação FinanceAI para Meta Selecionada
         if (targetMeta != null) {
@@ -192,6 +247,8 @@ public class InvestimentosActivity extends AppCompatActivity {
 
         view.findViewById(R.id.btn_save_goal).setOnClickListener(v -> {
             String valStr = etValue.getText().toString();
+            String customTitle = etTitle.getText().toString();
+            
             if (!valStr.isEmpty()) {
                 double val = Double.parseDouble(valStr);
                 
@@ -201,9 +258,6 @@ public class InvestimentosActivity extends AppCompatActivity {
                     return;
                 }
 
-                float current = prefs.getFloat("val_" + key, 0f);
-                prefs.edit().putFloat("val_" + key, (float)(current + val)).apply();
-
                 executor.execute(() -> {
                     if (targetMeta != null) {
                         targetMeta.setValorAtual(targetMeta.getValorAtual() + val);
@@ -211,9 +265,14 @@ public class InvestimentosActivity extends AppCompatActivity {
                     }
 
                     Transaction tx = new Transaction();
-                    tx.setTitle(targetMeta != null ? "Aporte: " + targetMeta.getNome() : (key.equals("poupanca") ? "Aplicação Poupança" : "Novo Investimento"));
-                    tx.setAmount((float)val);
-                    tx.setCategoryName(key.equals("poupanca") ? "Poupança" : "Investimento");
+                    if (targetMeta != null) {
+                        tx.setTitle("Aporte: " + targetMeta.getNome());
+                    } else {
+                        tx.setTitle(customTitle.isEmpty() ? (key.equals("poupanca") ? "Poupança" : (key.equals("reserva") ? "Reserva" : "Investimento")) : customTitle);
+                    }
+                    
+                    tx.setAmount(val);
+                    tx.setCategoryName(key.equals("poupanca") ? "Poupança" : (key.equals("reserva") ? "Reserva" : "Investimento"));
                     tx.setDate(System.currentTimeMillis());
                     tx.setExpense(true);
                     db.transactionDao().insert(tx);
@@ -227,6 +286,7 @@ public class InvestimentosActivity extends AppCompatActivity {
             }
         });
 
+        view.findViewById(R.id.btn_save_goal).setBackgroundTintList(android.content.res.ColorStateList.valueOf(PreferencesHelper.getPrimaryColor(this)));
         view.findViewById(R.id.btn_cancel_goal).setOnClickListener(v -> dialog.dismiss());
         dialog.show();
     }
@@ -246,9 +306,12 @@ public class InvestimentosActivity extends AppCompatActivity {
             // UI Cleanup para Investir Sobra
             view.findViewById(R.id.til_goal_title).setVisibility(View.GONE);
             view.findViewById(R.id.til_goal_deadline).setVisibility(View.GONE);
-            ((TextView)view.findViewById(R.id.tv_dialog_title)).setText("Investir Sobra");
+            TextView tvTitle = view.findViewById(R.id.tv_dialog_title);
+            tvTitle.setText("Investir Sobra");
+            tvTitle.setTextColor(PreferencesHelper.getPrimaryColor(this));
             ((TextView)view.findViewById(R.id.tv_dialog_subtitle)).setText("Saldo Disponível: " + com.financeai.utils.CurrencyHelper.format(saldoDisponivelAtual));
             ((Button)view.findViewById(R.id.btn_save_goal)).setText("Investir Agora");
+            ((Button)view.findViewById(R.id.btn_save_goal)).setBackgroundTintList(android.content.res.ColorStateList.valueOf(PreferencesHelper.getPrimaryColor(this)));
             
             // Customizando a Recomendação FinanceAI para 80%
             tvRecTitle.setText("💡 Recomendação de Alocação (80%)");

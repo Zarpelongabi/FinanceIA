@@ -4,26 +4,33 @@ import android.content.Context;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
+import com.bumptech.glide.Glide;
 import com.financeai.R;
+import com.financeai.models.Category;
 import com.financeai.models.Transaction;
 import com.financeai.utils.CurrencyHelper;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.TransactionViewHolder> {
     public interface OnTransactionClickListener {
         void onTransactionClick(Transaction transaction);
         void onTransactionLongClick(Transaction transaction);
+        default void onConfirmClick(Transaction transaction) {}
     }
 
     private List<Transaction> transactions = new ArrayList<>();
+    private Map<String, Category> categoryMap = new HashMap<>();
     private final OnTransactionClickListener listener;
     private final SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
 
@@ -56,7 +63,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         
         // Ajuste: Cores e Ícones
         String cat = currentTransaction.getCategoryName() != null ? currentTransaction.getCategoryName().toLowerCase() : "";
-        boolean isInvestment = cat.contains("invest") || cat.contains("poup");
+        boolean isInvestment = cat.contains("invest") || cat.contains("poup") || cat.contains("reserva");
 
         if (isInvestment) {
             holder.textViewAmount.setText("-" + CurrencyHelper.format(currentTransaction.getAmount()));
@@ -68,7 +75,15 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.red_negative));
             
             // Ícone da categoria para gastos
-            holder.imageViewIcon.setImageResource(getCategoryIcon(holder.itemView.getContext(), currentTransaction.getCategoryName()));
+            Category category = categoryMap.get(currentTransaction.getCategoryName());
+            if (category != null && category.getIconPath() != null) {
+                Glide.with(holder.itemView.getContext())
+                    .load(category.getIconPath())
+                    .circleCrop()
+                    .into(holder.imageViewIcon);
+            } else {
+                holder.imageViewIcon.setImageResource(getCategoryIcon(holder.itemView.getContext(), currentTransaction.getCategoryName()));
+            }
         } else {
             holder.textViewAmount.setText("+" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.green_positive));
@@ -78,6 +93,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         }
 
         holder.textViewDate.setText(dateFormat.format(new Date(currentTransaction.getDate())) + " · " + currentTransaction.getCategoryName());
+
+        if (currentTransaction.isPredicted()) {
+            holder.btnConfirmPredicted.setVisibility(View.VISIBLE);
+            holder.btnConfirmPredicted.setOnClickListener(v -> {
+                if (listener != null) {
+                    listener.onConfirmClick(currentTransaction);
+                }
+            });
+        } else {
+            holder.btnConfirmPredicted.setVisibility(View.GONE);
+        }
 
         holder.itemView.setOnClickListener(null); // Desativa o clique simples
         
@@ -99,6 +125,16 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         notifyDataSetChanged();
     }
 
+    public void setCategories(List<Category> categories) {
+        this.categoryMap.clear();
+        if (categories != null) {
+            for (Category cat : categories) {
+                this.categoryMap.put(cat.getName(), cat);
+            }
+        }
+        notifyDataSetChanged();
+    }
+
     private int getCategoryIcon(Context context, String category) {
         String resName = "outros";
         if (category != null) {
@@ -108,7 +144,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             else if (cat.contains("lazer") || cat.contains("cinema") || cat.contains("show") || cat.contains("viagem")) resName = "lazer";
             else if (cat.contains("conta") || cat.contains("boleto") || cat.contains("luz") || cat.contains("agua")) resName = "contas";
             else if (cat.contains("saúde") || cat.contains("saude") || cat.contains("farma") || cat.contains("medico")) resName = "saude";
-            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro")) resName = "investimentos";
+            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro") || cat.contains("reserva")) resName = "investimentos";
             else if (cat.contains("educa") || cat.contains("curso") || cat.contains("faculdade") || cat.contains("livro")) resName = "educacao";
             else if (cat.contains("pet") || cat.contains("dog") || cat.contains("cat")) resName = "pets";
             else if (cat.contains("casa") || cat.contains("aluguel") || cat.contains("moveis")) resName = "moradia";
@@ -126,6 +162,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         private TextView textViewAmount;
         private TextView textViewDate;
         private ImageView imageViewIcon;
+        private android.widget.ImageButton btnConfirmPredicted;
 
         public TransactionViewHolder(View itemView) {
             super(itemView);
@@ -133,6 +170,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             textViewAmount = itemView.findViewById(R.id.text_view_amount);
             textViewDate = itemView.findViewById(R.id.text_view_date);
             imageViewIcon = itemView.findViewById(R.id.iv_category_icon);
+            btnConfirmPredicted = itemView.findViewById(R.id.btn_confirm_predicted);
         }
     }
 }

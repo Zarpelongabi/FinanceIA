@@ -300,6 +300,24 @@
                 android:textColor="@color/text_gray"
                 android:textSize="12sp" />
 
+            <!-- Histórico de Investimentos -->
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="HISTÓRICO DE APORTES"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:letterSpacing="0.1"
+                android:textStyle="bold" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rv_investment_history"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="16dp"
+                android:nestedScrollingEnabled="false" />
+
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>
 

@@ -16,7 +16,7 @@ import java.util.concurrent.Executors;
 public class AddTransactionActivity extends AppCompatActivity {
 
     private EditText etTitle, etAmount;
-    private RadioButton rbFixed;
+    private RadioButton rbFixed, rbPredicted;
     private Spinner spinnerCategory;
     private AppDatabase db;
 
@@ -30,6 +30,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         etTitle = findViewById(R.id.et_title);
         etAmount = findViewById(R.id.et_amount);
         rbFixed = findViewById(R.id.rb_fixed);
+        rbPredicted = findViewById(R.id.rb_predicted);
         spinnerCategory = findViewById(R.id.spinner_category);
         Button btnSave = findViewById(R.id.btn_save);
 
@@ -54,6 +55,7 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         double amount = Double.parseDouble(amountStr);
         boolean isFixed = rbFixed.isChecked();
+        boolean isPredicted = rbPredicted.isChecked();
         String category = spinnerCategory.getSelectedItem().toString();
 
         Transaction transaction = new Transaction();
@@ -61,6 +63,7 @@ public class AddTransactionActivity extends AppCompatActivity {
         transaction.setAmount(amount);
         transaction.setCategoryName(category);
         transaction.setRecurring(isFixed);
+        transaction.setPredicted(isPredicted);
         transaction.setDate(System.currentTimeMillis());
         transaction.setExpense(true); // Definido como gasto
 

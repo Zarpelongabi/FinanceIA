@@ -11,21 +11,20 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
-import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 import com.financeai.R;
 import com.financeai.activities.AddTransactionActivity;
-import com.financeai.activities.HistoryActivity;
-import com.financeai.activities.InvestimentosActivity;
 import com.financeai.adapters.TransactionAdapter;
 import com.financeai.database.AppDatabase;
 import com.financeai.utils.CurrencyHelper;
 import com.financeai.utils.DateHelper;
+import com.financeai.utils.PreferencesHelper;
 import com.financeai.utils.SpendingAnalyzer;
 import com.github.mikephil.charting.charts.PieChart;
 import com.github.mikephil.charting.data.PieData;
@@ -181,6 +180,62 @@ public class HomeFragment extends Fragment {
                 ((com.financeai.activities.MainActivity) getActivity()).goToPage(1);
             }
         });
+
+        applyDynamicColors(view);
+    }
+
+    private void applyDynamicColors(View view) {
+        int primaryColor = PreferencesHelper.getPrimaryColor(requireContext());
+        int primaryLight = PreferencesHelper.getPrimaryLightColor(requireContext());
+        int surfaceColor = PreferencesHelper.getSurfaceColor(requireContext());
+
+        // Botão Adicionar
+        btnAddExpense.setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor));
+
+        // Cards de Renda e Insight (Bordas)
+        com.google.android.material.card.MaterialCardView cSalary = view.findViewById(R.id.card_salary);
+        com.google.android.material.card.MaterialCardView cExtra = view.findViewById(R.id.card_extra_income);
+        com.google.android.material.card.MaterialCardView cInsight = view.findViewById(R.id.card_ai_insight);
+        
+        cSalary.setStrokeColor(primaryLight);
+        cExtra.setStrokeColor(primaryLight);
+        cInsight.setStrokeColor(primaryLight);
+        
+        cSalary.setCardBackgroundColor(surfaceColor);
+        cExtra.setCardBackgroundColor(surfaceColor);
+        cInsight.setCardBackgroundColor(surfaceColor);
+
+        // Valores de Renda
+        tvSalaryValue.setTextColor(primaryLight);
+        tvExtraIncomeValue.setTextColor(primaryLight);
+
+        // Ícone Insight - Reusando a variável cInsight para evitar múltiplos lookups
+        if (cInsight instanceof ViewGroup) {
+            ViewGroup vg = (ViewGroup) cInsight;
+            for (int i = 0; i < vg.getChildCount(); i++) {
+                View child = vg.getChildAt(i);
+                if (child instanceof ViewGroup) {
+                    ViewGroup innerVg = (ViewGroup) child;
+                    for (int j = 0; j < innerVg.getChildCount(); j++) {
+                        View innerChild = innerVg.getChildAt(j);
+                        if (innerChild instanceof ImageView) {
+                            ((ImageView) innerChild).setColorFilter(primaryLight);
+                        }
+                    }
+                }
+            }
+        }
+
+        // Card Principal (Gradient)
+        View cardMain = view.findViewById(R.id.card_main_content);
+        if (cardMain != null) {
+            android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable(
+                android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
+                new int[] { primaryColor, PreferencesHelper.getPrimaryDarkColor(requireContext()) }
+            );
+            gd.setCornerRadius(0f); // O CardView já tem corner radius
+            cardMain.setBackground(gd);
+        }
     }
 
     private void loadDashboardData() {
@@ -220,7 +275,8 @@ public class HomeFragment extends Fragment {
 
             String statusTitle = "Meta de Aporte Mensal";
             String statusValue = CurrencyHelper.format(totalMetaEffort);
-            int statusColor = getResources().getColor(R.color.invest_purple);
+            int primaryColor = PreferencesHelper.getPrimaryColor(requireContext());
+            int statusColor = PreferencesHelper.getPrimaryLightColor(requireContext());
 
             if (totalIncome <= 0) {
                 statusValue = "Defina sua renda";
@@ -228,7 +284,7 @@ public class HomeFragment extends Fragment {
             } else if (investmentsOnly >= totalMetaEffort && totalMetaEffort > 0) {
                 statusTitle = "Meta de Aporte";
                 statusValue = "Concluída! ✅";
-                statusColor = getResources().getColor(R.color.green_positive);
+                statusColor = primaryColor; // Usar a cor primária vibrante para sucesso
             }
 
             List<com.financeai.database.dao.TransactionDao.CategorySummary> catSummary = db.transactionDao().getCategoryExpensesSummary(month[0], month[1]);
@@ -249,7 +305,7 @@ public class HomeFragment extends Fragment {
                     String topCat = "outros";
                     for(com.financeai.database.dao.TransactionDao.CategorySummary cs : catSummary) {
                         String name = cs.categoryName.toLowerCase();
-                        if (!name.contains("invest") && !name.contains("poup")) {
+                        if (!name.contains("invest") && !name.contains("poup") && !name.contains("reserva")) {
                             topCat = cs.categoryName;
                             break;
                         }
@@ -303,6 +359,12 @@ public class HomeFragment extends Fragment {
         cal.set(java.util.Calendar.MINUTE, 59);
         long endOfDay = cal.getTimeInMillis();
 
+        db.categoryDao().getAllCategories().observe(getViewLifecycleOwner(), categories -> {
+            if (categories != null) {
+                transactionAdapter.setCategories(categories);
+            }
+        });
+
         db.transactionDao().getTransactionsByPeriod(range[0], endOfDay).observe(getViewLifecycleOwner(), transactions -> {
             if (transactions != null) {
                 // Ordenar por valor decrescente
@@ -346,38 +408,32 @@ public class HomeFragment extends Fragment {
         pieChart.setData(data);
         
         // Estilização "Donut" mais fino
-        pieChart.setHoleRadius(75f); 
-        pieChart.setTransparentCircleRadius(80f);
+        pieChart.setHoleRadius(85f); 
+        pieChart.setTransparentCircleRadius(0f);
         pieChart.setHoleColor(Color.TRANSPARENT);
         pieChart.setCenterText("Gastos\n" + (int)((monthTotal/totalIncome)*100) + "%");
         pieChart.setCenterTextColor(Color.WHITE);
         pieChart.setCenterTextSize(14f);
         
         pieChart.getDescription().setEnabled(false);
-        pieChart.getLegend().setEnabled(true);
-        pieChart.getLegend().setTextColor(Color.WHITE);
-        pieChart.getLegend().setVerticalAlignment(com.github.mikephil.charting.components.Legend.LegendVerticalAlignment.BOTTOM);
-        pieChart.getLegend().setHorizontalAlignment(com.github.mikephil.charting.components.Legend.LegendHorizontalAlignment.CENTER);
-        pieChart.getLegend().setOrientation(com.github.mikephil.charting.components.Legend.LegendOrientation.HORIZONTAL);
-        pieChart.getLegend().setDrawInside(false);
-        pieChart.getLegend().setWordWrapEnabled(true);
+        pieChart.getLegend().setEnabled(false); // Remove legenda interna para poluir menos
         
         // Remove labels das fatias (mostra apenas na legenda)
         pieChart.setDrawEntryLabels(false);
         
-        pieChart.animateY(1000);
+        pieChart.animateY(1400, com.github.mikephil.charting.animation.Easing.EaseInOutQuad);
         pieChart.invalidate();
     }
 
     private int getCategoryColor(String category) {
         String cat = category.toLowerCase();
-        if (cat.contains("saúde")) return getResources().getColor(R.color.chart_health);
-        if (cat.contains("conta")) return getResources().getColor(R.color.red_negative);
-        if (cat.contains("alimen")) return getResources().getColor(R.color.chart_food);
-        if (cat.contains("lazer")) return getResources().getColor(R.color.chart_leisure);
-        if (cat.contains("transp") || cat.contains("uber")) return getResources().getColor(R.color.chart_transport);
-        if (cat.contains("invest") || cat.contains("poup")) return getResources().getColor(R.color.invest_purple);
-        return getResources().getColor(R.color.chart_others);
+        if (cat.contains("saúde")) return ContextCompat.getColor(requireContext(), R.color.chart_health);
+        if (cat.contains("conta")) return ContextCompat.getColor(requireContext(), R.color.red_negative);
+        if (cat.contains("alimen")) return ContextCompat.getColor(requireContext(), R.color.chart_food);
+        if (cat.contains("lazer")) return ContextCompat.getColor(requireContext(), R.color.chart_leisure);
+        if (cat.contains("transp") || cat.contains("uber")) return ContextCompat.getColor(requireContext(), R.color.chart_transport);
+        if (cat.contains("invest") || cat.contains("poup") || cat.contains("reserva")) return ContextCompat.getColor(requireContext(), R.color.invest_purple);
+        return ContextCompat.getColor(requireContext(), R.color.chart_others);
     }
 
     private void showSalaryDialog(boolean isSalary) {
