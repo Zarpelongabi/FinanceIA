@@ -1,6 +1,6 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <!-- Base application theme. -->
-    <style name="Theme.FinanceAI" parent="Theme.Material3.DayNight.NoActionBar">
+    <style name="Theme.Vortex" parent="Theme.Material3.DayNight.NoActionBar">
         <!-- Primary brand color. -->
         <item name="colorPrimary">@color/primary_eco</item>
         <item name="colorOnPrimary">@color/white</item>
@@ -10,11 +10,82 @@
         <item name="android:windowLightStatusBar" tools:targetApi="m">false</item>
     </style>
 
-    <style name="Theme.FinanceAI.Dark" parent="Theme.FinanceAI" />
+    <style name="Theme.Vortex.Dark" parent="Theme.Vortex" />
 
-    <style name="Theme.FinanceAI.Splash" parent="Theme.FinanceAI">
+    <style name="Theme.Vortex.Splash" parent="Theme.Vortex">
         <item name="android:windowBackground">@color/bg_dark</item>
         <item name="android:windowNoTitle">true</item>
         <item name="android:windowFullscreen">true</item>
     </style>
+
+    <!-- ========== NEUMORPHIC CARD STYLES ========== -->
+    <style name="NeumorphicCard">
+        <item name="android:background">@drawable/bg_neumorphic_card</item>
+        <item name="android:padding">@dimen/card_padding</item>
+        <item name="android:elevation">@dimen/card_elevation</item>
+    </style>
+
+    <style name="NeumorphicCard.Flat">
+        <item name="android:background">@drawable/bg_neumorphic_card_flat</item>
+    </style>
+
+    <style name="NeumorphicCard.Pressed">
+        <item name="android:background">@drawable/bg_neumorphic_card_pressed</item>
+    </style>
+
+    <!-- ========== GLASSMORPHISM STYLES ========== -->
+    <style name="GlassmorphismNav">
+        <item name="android:background">@drawable/bg_glassmorphism_nav</item>
+        <item name="android:elevation">16dp</item>
+    </style>
+
+    <style name="GlassmorphicCard">
+        <item name="android:background">@drawable/bg_glassmorphic_card</item>
+        <item name="android:padding">@dimen/card_padding</item>
+    </style>
+
+    <!-- ========== TEXT STYLES ========== -->
+    <style name="TextHeading">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">@dimen/text_size_heading</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+
+    <style name="TextSubtitle">
+        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:textSize">@dimen/text_size_subtitle</item>
+    </style>
+
+    <style name="TextBody">
+        <item name="android:textColor">@color/text_white</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+    </style>
+
+    <style name="TextCaption">
+        <item name="android:textColor">@color/text_gray</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+    </style>
+
+    <!-- ========== BUTTON STYLES ========== -->
+    <style name="NeonButton">
+        <item name="android:background">@drawable/bg_neon_button</item>
+        <item name="android:textColor">@color/bg_dark</item>
+        <item name="android:textSize">@dimen/text_size_body</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:paddingLeft">@dimen/spacing_xl</item>
+        <item name="android:paddingRight">@dimen/spacing_xl</item>
+        <item name="android:paddingTop">@dimen/spacing_l</item>
+        <item name="android:paddingBottom">@dimen/spacing_l</item>
+        <item name="android:minHeight">@dimen/button_height</item>
+    </style>
+
+    <style name="NeonButton.Purple">
+        <item name="android:background">@drawable/bg_neon_button_purple</item>
+    </style>
+
+    <!-- ========== GRADIENT BACKGROUNDS ========== -->
+    <style name="GradientBackground">
+        <item name="android:background">@drawable/bg_gradient_neon</item>
+    </style>
+
 </resources>

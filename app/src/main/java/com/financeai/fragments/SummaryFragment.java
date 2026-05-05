@@ -20,7 +20,9 @@ import com.financeai.models.Category;
 import com.financeai.utils.CurrencyHelper;
 import com.financeai.utils.PreferencesHelper;
 import com.financeai.utils.SpendingAnalyzer;
+import com.google.android.material.tabs.TabLayout;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
@@ -31,9 +33,11 @@ public class SummaryFragment extends Fragment {
     private TextView tvComparisonText, tvSummaryTip;
     private ProgressBar pbComparison;
     private RecyclerView rvTopCategories;
+    private TabLayout tabMonths;
     private AppDatabase db;
     private List<Category> allCategories = new ArrayList<>();
     private ExecutorService executor = Executors.newSingleThreadExecutor();
+    private Calendar selectedMonth = Calendar.getInstance();
 
     @Nullable
     @Override
@@ -45,13 +49,16 @@ public class SummaryFragment extends Fragment {
         tvSummaryTip = view.findViewById(R.id.tv_summary_tip);
         pbComparison = view.findViewById(R.id.pb_comparison);
         rvTopCategories = view.findViewById(R.id.rv_top_categories);
+        tabMonths = view.findViewById(R.id.tab_months);
 
         rvTopCategories.setLayoutManager(new LinearLayoutManager(getContext()));
+
+        setupTabs();
 
         db.categoryDao().getAllCategories().observe(getViewLifecycleOwner(), categories -> {
             if (categories != null) {
                 this.allCategories = categories;
-                loadSummaryData(); // Recarrega para aplicar ícones se as categorias chegarem depois
+                loadSummaryData(); 
             }
         });
 
@@ -59,21 +66,41 @@ public class SummaryFragment extends Fragment {
         return view;
     }
 
+    private void setupTabs() {
+        tabMonths.removeAllTabs();
+        Calendar cal = Calendar.getInstance();
+        for (int i = 0; i < 12; i++) {
+            String monthName = new java.text.SimpleDateFormat("MMM/yy", Locale.getDefault()).format(cal.getTime());
+            TabLayout.Tab tab = tabMonths.newTab().setText(monthName).setTag(cal.clone());
+            tabMonths.addTab(tab, i == 0);
+            cal.add(Calendar.MONTH, -1);
+        }
+
+        tabMonths.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                selectedMonth = (Calendar) tab.getTag();
+                loadSummaryData();
+            }
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {}
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {}
+        });
+    }
+
     private void loadSummaryData() {
         executor.execute(() -> {
-            long[] currentMonth = SpendingAnalyzer.getMonthRange();
+            long[] currentRange = SpendingAnalyzer.getMonthRange(selectedMonth);
             
-            java.util.Calendar cal = java.util.Calendar.getInstance();
-            cal.add(java.util.Calendar.MONTH, -1);
-            cal.set(java.util.Calendar.DAY_OF_MONTH, 1);
-            long startLastMonth = cal.getTimeInMillis();
-            cal.set(java.util.Calendar.DAY_OF_MONTH, cal.getActualMaximum(java.util.Calendar.DAY_OF_MONTH));
-            long endLastMonth = cal.getTimeInMillis();
+            Calendar lastMonthCal = (Calendar) selectedMonth.clone();
+            lastMonthCal.add(Calendar.MONTH, -1);
+            long[] lastRange = SpendingAnalyzer.getMonthRange(lastMonthCal);
 
-            double spentCurrent = db.transactionDao().getTotalRealExpenseByPeriod(currentMonth[0], currentMonth[1]);
-            double spentLast = db.transactionDao().getTotalRealExpenseByPeriod(startLastMonth, endLastMonth);
+            double spentCurrent = db.transactionDao().getTotalRealExpenseByPeriod(currentRange[0], currentRange[1]);
+            double spentLast = db.transactionDao().getTotalRealExpenseByPeriod(lastRange[0], lastRange[1]);
             
-            List<TransactionDao.CategorySummary> categories = db.transactionDao().getCategoryExpensesSummary(currentMonth[0], currentMonth[1]);
+            List<TransactionDao.CategorySummary> categories = db.transactionDao().getCategoryExpensesSummary(currentRange[0], currentRange[1]);
 
             // NOVO: Filtrar categorias de investimento/reserva do resumo de gastos
             if (categories != null) {

@@ -1,131 +1,121 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/bg_dark"
     tools:context=".activities.MainActivity">
 
-    <com.google.android.material.appbar.AppBarLayout
-        android:layout_width="match_parent"
+    <!-- Barra de Atalhos Superior -->
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/view_pager"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toTopOf="@+id/floating_menu_container"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0" />
+
+    <LinearLayout
+        android:id="@+id/top_bar"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:background="@android:color/transparent"
-        app:elevation="0dp">
+        android:gravity="end"
+        android:orientation="horizontal"
+        android:padding="@dimen/spacing_l"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageButton
+            android:id="@+id/btn_investments"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_compass"
+            app:tint="@color/white" />
+
+        <ImageButton
+            android:id="@+id/btn_settings"
+            android:layout_width="@dimen/icon_button_size"
+            android:layout_height="@dimen/icon_button_size"
+            android:layout_marginStart="@dimen/spacing_l"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/ic_settings"
+            app:tint="@color/white" />
+    </LinearLayout>
+
+    <!-- Menu Flutuante Moderno e Responsivo -->
+    <com.google.android.material.card.MaterialCardView
+        android:id="@+id/floating_menu_container"
+        android:layout_width="0dp"
+        android:layout_height="@dimen/nav_menu_height"
+        android:layout_marginHorizontal="@dimen/nav_menu_margin"
+        android:layout_marginBottom="@dimen/nav_menu_margin"
+        app:cardBackgroundColor="@color/bg_dark_secondary"
+        app:cardCornerRadius="@dimen/card_corner_radius_large"
+        app:cardElevation="8dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:strokeColor="#1AFFFFFF"
+        app:strokeWidth="1dp">
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/bg_dark"
-            android:orientation="horizontal"
-            android:paddingTop="48dp"
-            android:paddingBottom="12dp"
-            android:paddingHorizontal="16dp"
-            android:gravity="center_vertical">
-
-            <TextView
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:text="FinanceIA"
-                android:textColor="@color/white"
-                android:textSize="20sp"
-                android:textStyle="bold" />
-
-            <ImageButton
-                android:id="@+id/btn_investments"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/investimento"
-                android:scaleType="fitCenter"
-                android:padding="8dp" />
-
-            <ImageButton
-                android:id="@+id/btn_settings"
-                android:layout_width="44dp"
-                android:layout_height="44dp"
-                android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_manage"
-                app:tint="@color/white"
-                android:padding="8dp" />
-        </LinearLayout>
-
-    </com.google.android.material.appbar.AppBarLayout>
-
-    <androidx.viewpager2.widget.ViewPager2
-        android:id="@+id/view_pager"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior" />
-
-    <!-- Mini Menu Inferior Flutuante -->
-    <com.google.android.material.card.MaterialCardView
-        android:id="@+id/floating_menu_container"
-        android:layout_width="wrap_content"
-        android:layout_height="60dp"
-        android:layout_gravity="bottom|center_horizontal"
-        android:layout_marginBottom="24dp"
-        app:cardCornerRadius="30dp"
-        app:cardElevation="8dp"
-        app:cardBackgroundColor="@android:color/transparent"
-        app:strokeWidth="0dp">
-
-        <LinearLayout
-            android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:background="@drawable/bg_floating_menu"
-            android:orientation="horizontal"
-            android:paddingHorizontal="16dp"
-            android:gravity="center_vertical">
+            android:gravity="center"
+            android:orientation="horizontal">
 
             <ImageButton
                 android:id="@+id/btn_nav_home"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_today"
-                android:contentDescription="Início"
-                app:tint="@color/primary_eco" />
+                android:src="@android:drawable/ic_menu_myplaces"
+                app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/btn_nav_summary"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_menu_sort_by_size"
-                android:contentDescription="Resumo"
+                android:src="@android:drawable/ic_menu_agenda"
                 app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/btn_nav_history"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
                 android:src="@android:drawable/ic_menu_recent_history"
-                android:contentDescription="Histórico"
                 app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/btn_nav_goals"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/btn_star_big_on"
-                android:contentDescription="Metas"
+                android:src="@android:drawable/btn_star"
                 app:tint="@color/white" />
 
             <ImageButton
                 android:id="@+id/btn_nav_predicted"
-                android:layout_width="48dp"
-                android:layout_height="48dp"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
                 android:background="?attr/selectableItemBackgroundBorderless"
-                android:src="@android:drawable/ic_popup_reminder"
-                android:contentDescription="Previstos"
+                android:src="@android:drawable/ic_menu_day"
                 app:tint="@color/white" />
 
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -7,20 +7,32 @@ import java.util.List;
 public class DateHelper {
     
     public static String getFifthWorkingDay() {
-        Calendar cal = Calendar.getInstance();
-        Calendar today = (Calendar) cal.clone();
+        Calendar fifthDay = getFifthWorkingDayCalendar(Calendar.getInstance());
+        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
+        return sdf.format(fifthDay.getTime());
+    }
+
+    public static Calendar getFifthWorkingDayCalendar(Calendar reference) {
+        Calendar cal = (Calendar) reference.clone();
         
-        // Tenta calcular para o mês atual
-        Calendar fifthDayCurrentMonth = calculateFifthWorkingDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH));
+        // Tenta calcular para o mês da referência
+        Calendar fifthDay = calculateFifthWorkingDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH));
         
-        // Se hoje já passou do quinto dia útil deste mês, calcula para o próximo mês
-        if (today.after(fifthDayCurrentMonth)) {
+        // Se a referência já passou do quinto dia útil deste mês, calcula para o próximo mês
+        if (reference.after(fifthDay)) {
             cal.add(Calendar.MONTH, 1);
-            fifthDayCurrentMonth = calculateFifthWorkingDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH));
+            fifthDay = calculateFifthWorkingDay(cal.get(Calendar.YEAR), cal.get(Calendar.MONTH));
         }
         
-        java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy", java.util.Locale.getDefault());
-        return sdf.format(fifthDayCurrentMonth.getTime());
+        return fifthDay;
+    }
+
+    public static boolean isTodayFifthWorkingDay() {
+        Calendar today = Calendar.getInstance();
+        Calendar fifthDay = calculateFifthWorkingDay(today.get(Calendar.YEAR), today.get(Calendar.MONTH));
+        
+        return today.get(Calendar.YEAR) == fifthDay.get(Calendar.YEAR) &&
+               today.get(Calendar.DAY_OF_YEAR) == fifthDay.get(Calendar.DAY_OF_YEAR);
     }
 
     private static Calendar calculateFifthWorkingDay(int year, int month) {

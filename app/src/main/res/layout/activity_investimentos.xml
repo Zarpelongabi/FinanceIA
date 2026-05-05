@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A1210">
+    android:background="@color/bg_dark">
 
     <com.google.android.material.appbar.AppBarLayout
         android:layout_width="match_parent"
@@ -43,6 +43,7 @@
     <androidx.core.widget.NestedScrollView
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/bg_dark"
         app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
         <LinearLayout
@@ -58,7 +59,7 @@
                 app:cardBackgroundColor="@android:color/transparent"
                 app:cardCornerRadius="32dp"
                 app:cardElevation="10dp"
-                app:strokeColor="#3326C694"
+                app:strokeColor="#3300D2FF"
                 app:strokeWidth="1dp">
 
                 <FrameLayout
@@ -105,7 +106,7 @@
                             android:layout_height="wrap_content"
                             android:layout_marginTop="16dp"
                             android:text="+ R$ 0,00 lucro/mês"
-                            android:textColor="#00FF88"
+                            android:textColor="@color/primary_eco"
                             android:textSize="13sp"
                             android:textStyle="bold" />
                     </LinearLayout>
@@ -117,9 +118,9 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                app:cardBackgroundColor="#12241F"
+                app:cardBackgroundColor="@color/bg_dark_secondary"
                 app:cardCornerRadius="24dp"
-                app:strokeColor="#3300FF88"
+                app:strokeColor="#3300D2FF"
                 app:strokeWidth="1dp">
 
                 <RelativeLayout
@@ -145,7 +146,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Disponível para investir"
-                            android:textColor="#B0FFB0"
+                            android:textColor="@color/primary_eco"
                             android:textSize="12sp" />
 
                         <TextView
@@ -186,9 +187,9 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:layout_marginEnd="8dp"
-                    app:cardBackgroundColor="#12241F"
+                    app:cardBackgroundColor="@color/bg_dark_secondary"
                     app:cardCornerRadius="24dp"
-                    app:strokeColor="#3326C694"
+                    app:strokeColor="#3300D2FF"
                     app:strokeWidth="1dp">
 
                     <LinearLayout

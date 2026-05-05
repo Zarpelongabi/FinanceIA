@@ -40,7 +40,8 @@ public class SettingsActivity extends AppCompatActivity {
 
     private AppDatabase db;
     private CategoryAdapter adapter;
-    private MaterialSwitch switchTheme;
+    private MaterialSwitch switchTheme, switchHideBalance;
+    private TextView tvCurrentUsername, tvCurrentBudget;
     private static final int PICK_FILE_REQUEST = 1;
     private static final int CREATE_FILE_REQUEST = 2;
     private static final int PICK_IMAGE_REQUEST = 3;
@@ -52,9 +53,9 @@ public class SettingsActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         if (PreferencesHelper.isDarkTheme(this)) {
-            setTheme(R.style.Theme_FinanceAI_Dark);
+            setTheme(R.style.Theme_Vortex_Dark);
         } else {
-            setTheme(R.style.Theme_FinanceAI);
+            setTheme(R.style.Theme_Vortex);
         }
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_settings);
@@ -66,10 +67,29 @@ public class SettingsActivity extends AppCompatActivity {
     }
 
     private void initViews() {
-        setupColorPicker();
-
         int primaryColor = PreferencesHelper.getPrimaryColor(this);
         
+        switchTheme = findViewById(R.id.switch_theme);
+        switchTheme.setChecked(PreferencesHelper.isDarkTheme(this));
+        switchTheme.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferencesHelper.setDarkTheme(this, isChecked);
+            recreate();
+        });
+
+        tvCurrentUsername = findViewById(R.id.tv_current_username);
+        tvCurrentUsername.setText(PreferencesHelper.getUserName(this));
+        findViewById(R.id.btn_change_name).setOnClickListener(v -> showNameChangeDialog());
+
+        switchHideBalance = findViewById(R.id.switch_hide_balance);
+        switchHideBalance.setChecked(PreferencesHelper.isHideBalance(this));
+        switchHideBalance.setOnCheckedChangeListener((buttonView, isChecked) -> {
+            PreferencesHelper.setHideBalance(this, isChecked);
+        });
+
+        tvCurrentBudget = findViewById(R.id.tv_current_budget);
+        updateBudgetDisplay();
+        findViewById(R.id.btn_monthly_budget).setOnClickListener(v -> showBudgetChangeDialog());
+
         MaterialButton btnAddCategory = findViewById(R.id.btn_add_category);
         btnAddCategory.setStrokeColor(ColorStateList.valueOf(primaryColor));
         btnAddCategory.setTextColor(primaryColor);
@@ -110,37 +130,87 @@ public class SettingsActivity extends AppCompatActivity {
         ((TextView)findViewById(R.id.tv_title_personalization)).setTextColor(primaryColor);
         ((TextView)findViewById(R.id.tv_title_backup)).setTextColor(primaryColor);
         ((TextView)findViewById(R.id.tv_title_categories)).setTextColor(primaryColor);
+        ((TextView)findViewById(R.id.tv_title_credits)).setTextColor(primaryColor);
 
         // Aplicar cor de superfície dinâmica nos cards
         int surfaceColor = PreferencesHelper.getSurfaceColor(this);
         findViewById(R.id.card_personalization).setBackgroundTintList(ColorStateList.valueOf(surfaceColor));
         findViewById(R.id.card_backup).setBackgroundTintList(ColorStateList.valueOf(surfaceColor));
+        findViewById(R.id.card_credits).setBackgroundTintList(ColorStateList.valueOf(surfaceColor));
         
         // Aplicar cor na barra de status
         getWindow().setStatusBarColor(PreferencesHelper.getPrimaryDarkColor(this));
     }
 
-    private void setupColorPicker() {
-        View colorEmerald = findViewById(R.id.color_emerald);
-        View colorBlue = findViewById(R.id.color_blue);
-        View colorPurple = findViewById(R.id.color_purple);
-        View colorOrange = findViewById(R.id.color_orange);
+    private void showBudgetChangeDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_income, null);
+        TextView title = view.findViewById(R.id.tv_dialog_title);
+        TextView subtitle = view.findViewById(R.id.tv_dialog_subtitle);
+        EditText input = view.findViewById(R.id.et_income_value);
+        ImageView icon = view.findViewById(R.id.iv_dialog_icon);
+        MaterialButton btnSave = view.findViewById(R.id.btn_save_income);
+        MaterialButton btnCancel = view.findViewById(R.id.btn_cancel_income);
 
-        colorEmerald.setOnClickListener(v -> updatePrimaryColor(getResources().getColor(R.color.accent_emerald)));
-        colorBlue.setOnClickListener(v -> updatePrimaryColor(getResources().getColor(R.color.accent_blue)));
-        colorPurple.setOnClickListener(v -> updatePrimaryColor(getResources().getColor(R.color.accent_purple)));
-        colorOrange.setOnClickListener(v -> updatePrimaryColor(getResources().getColor(R.color.accent_orange)));
+        title.setText("Orçamento Mensal");
+        subtitle.setText("Defina seu limite de gastos mensal");
+        input.setHint("0,00");
+        input.setInputType(android.text.InputType.TYPE_CLASS_NUMBER | android.text.InputType.TYPE_NUMBER_FLAG_DECIMAL);
+        input.setText(String.valueOf(PreferencesHelper.getMonthlyBudget(this)));
+        icon.setImageResource(android.R.drawable.ic_menu_agenda);
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
+                .setView(view)
+                .create();
+
+        btnSave.setOnClickListener(v -> {
+            String value = input.getText().toString();
+            if (!value.isEmpty()) {
+                PreferencesHelper.setMonthlyBudget(this, Double.parseDouble(value));
+                updateBudgetDisplay();
+                dialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
-    private void updatePrimaryColor(int color) {
-        PreferencesHelper.setPrimaryColor(this, color);
-        Toast.makeText(this, "Cor atualizada! Reiniciando para aplicar...", Toast.LENGTH_SHORT).show();
-        
-        // Reinicia o app a partir da MainActivity para aplicar a cor em todo lugar
-        Intent intent = new Intent(this, MainActivity.class);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        startActivity(intent);
-        finish();
+    private void updateBudgetDisplay() {
+        double budget = PreferencesHelper.getMonthlyBudget(this);
+        tvCurrentBudget.setText(String.format("R$ %.2f", budget));
+    }
+
+    private void showNameChangeDialog() {
+        View view = LayoutInflater.from(this).inflate(R.layout.dialog_income, null);
+        TextView title = view.findViewById(R.id.tv_dialog_title);
+        TextView subtitle = view.findViewById(R.id.tv_dialog_subtitle);
+        EditText input = view.findViewById(R.id.et_income_value);
+        ImageView icon = view.findViewById(R.id.iv_dialog_icon);
+        MaterialButton btnSave = view.findViewById(R.id.btn_save_income);
+        MaterialButton btnCancel = view.findViewById(R.id.btn_cancel_income);
+
+        title.setText("Seu Nome");
+        subtitle.setText("Como você quer ser chamado?");
+        input.setHint("Digite seu nome");
+        input.setInputType(android.text.InputType.TYPE_CLASS_TEXT);
+        input.setText(PreferencesHelper.getUserName(this));
+        icon.setImageResource(android.R.drawable.ic_menu_edit);
+
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
+                .setView(view)
+                .create();
+
+        btnSave.setOnClickListener(v -> {
+            String name = input.getText().toString();
+            if (!name.isEmpty()) {
+                PreferencesHelper.setUserName(this, name);
+                tvCurrentUsername.setText(name);
+                dialog.dismiss();
+            }
+        });
+
+        btnCancel.setOnClickListener(v -> dialog.dismiss());
+        dialog.show();
     }
 
     private void loadCategories() {
@@ -171,7 +241,7 @@ public class SettingsActivity extends AppCompatActivity {
             updateDialogIcon("📦", null);
         }
 
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
                 .setView(dialogView)
                 .create();
 

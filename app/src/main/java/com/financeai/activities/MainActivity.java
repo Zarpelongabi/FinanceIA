@@ -9,7 +9,12 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.viewpager2.widget.ViewPager2;
 import com.financeai.R;
 import com.financeai.adapters.MainViewPagerAdapter;
+import com.financeai.database.AppDatabase;
+import com.financeai.models.Transaction;
+import com.financeai.utils.DateHelper;
 import com.financeai.utils.PreferencesHelper;
+import java.util.Calendar;
+import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -33,6 +38,33 @@ public class MainActivity extends AppCompatActivity {
         initViews();
         setupViewPager();
         setupMenu();
+        checkAndDepositSalary();
+    }
+
+    private void checkAndDepositSalary() {
+        if (DateHelper.isTodayFifthWorkingDay()) {
+            Calendar cal = Calendar.getInstance();
+            String currentMonthYear = (cal.get(Calendar.MONTH) + 1) + "/" + cal.get(Calendar.YEAR);
+            String lastDeposited = PreferencesHelper.getLastSalaryMonth(this);
+
+            if (!currentMonthYear.equals(lastDeposited)) {
+                double salary = PreferencesHelper.getSalary(this);
+                if (salary > 0) {
+                    Executors.newSingleThreadExecutor().execute(() -> {
+                        AppDatabase db = AppDatabase.getInstance(this);
+                        Transaction incomeTx = new Transaction();
+                        incomeTx.setTitle("Salário Automático");
+                        incomeTx.setAmount(salary);
+                        incomeTx.setCategoryName("Salário");
+                        incomeTx.setDate(System.currentTimeMillis());
+                        incomeTx.setExpense(false);
+                        db.transactionDao().insert(incomeTx);
+                        
+                        PreferencesHelper.setLastSalaryMonth(this, currentMonthYear);
+                    });
+                }
+            }
+        }
     }
 
     private void initViews() {

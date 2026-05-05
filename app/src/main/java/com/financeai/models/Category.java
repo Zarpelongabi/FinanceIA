@@ -38,7 +38,7 @@ public class Category {
                 "uber,99,cabify,onibus,passagem,combustivel,posto,gasolina,estacionamento,metro,trem"),
             createDefault("Lazer", "🎬", "#D4537E", 300.0,
                 "cinema,netflix,spotify,amazon prime,disney,shopping,loja,roupa,sapato,livro"),
-            createDefault("Contas", "⚡", "#BA7517", 400.0,
+            createDefault("Contas", "⚡", "#00D2FF", 400.0,
                 "energia,luz,agua,gas,internet,telefone,aluguel,condominio,iptu"),
             createDefault("Saúde", "💊", "#E24B4A", 200.0,
                 "farmacia,drogaria,medico,consulta,hospital,clinica,plano de saude,droga raia"),
@@ -48,7 +48,7 @@ public class Category {
                 "investimento,corretora,tesouro,acoes,fundo,xp,btg,nuinvest"),
             createDefault("Poupança", "🏦", "#2196F3", 0.0, 
                 "poupanca,caixa,banco"),
-            createDefault("Reserva", "🛡️", "#FF9800", 0.0, 
+            createDefault("Reserva", "🛡️", "#00D2FF", 0.0,
                 "reserva,emergencia,fundo reserva"),
             createDefault("Outros", "📦", "#888780", 0.0, "")
         };

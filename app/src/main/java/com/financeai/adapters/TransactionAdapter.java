@@ -61,6 +61,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         
         holder.textViewTitle.setText(title);
         
+        // Limpa tint para mostrar cores originais das imagens PNG
+        holder.imageViewIcon.setImageTintList(null);
+        
         // Ajuste: Cores e Ícones
         String cat = currentTransaction.getCategoryName() != null ? currentTransaction.getCategoryName().toLowerCase() : "";
         boolean isInvestment = cat.contains("invest") || cat.contains("poup") || cat.contains("reserva");
@@ -144,17 +147,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             else if (cat.contains("lazer") || cat.contains("cinema") || cat.contains("show") || cat.contains("viagem")) resName = "lazer";
             else if (cat.contains("conta") || cat.contains("boleto") || cat.contains("luz") || cat.contains("agua")) resName = "contas";
             else if (cat.contains("saúde") || cat.contains("saude") || cat.contains("farma") || cat.contains("medico")) resName = "saude";
-            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro") || cat.contains("reserva")) resName = "investimentos";
-            else if (cat.contains("educa") || cat.contains("curso") || cat.contains("faculdade") || cat.contains("livro")) resName = "educacao";
-            else if (cat.contains("pet") || cat.contains("dog") || cat.contains("cat")) resName = "pets";
-            else if (cat.contains("casa") || cat.contains("aluguel") || cat.contains("moveis")) resName = "moradia";
-            else if (cat.contains("shop") || cat.contains("compra") || cat.contains("roupa")) resName = "compras";
-            else if (cat.contains("assin") || cat.contains("netflix") || cat.contains("spotify") || cat.contains("streaming")) resName = "assinaturas";
+            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro") || cat.contains("reserva")) resName = "investimento";
+            else if (cat.contains("educa") || cat.contains("curso") || cat.contains("faculdade") || cat.contains("livro")) resName = "outros";
+            else if (cat.contains("pet") || cat.contains("dog") || cat.contains("cat")) resName = "outros";
+            else if (cat.contains("casa") || cat.contains("aluguel") || cat.contains("moveis")) resName = "outros";
+            else if (cat.contains("shop") || cat.contains("compra") || cat.contains("roupa")) resName = "outros";
+            else if (cat.contains("assin") || cat.contains("netflix") || cat.contains("spotify") || cat.contains("streaming")) resName = "outros";
+            else if (cat.contains("salário") || cat.contains("salario") || cat.contains("renda")) resName = "salario";
         }
         
         // Usa getDrawable para garantir que o sistema encontre os arquivos .png
         int resId = context.getResources().getIdentifier(resName, "drawable", context.getPackageName());
-        return resId != 0 ? resId : android.R.drawable.ic_menu_agenda;
+        return resId != 0 ? resId : R.drawable.outros;
     }
 
     class TransactionViewHolder extends RecyclerView.ViewHolder {

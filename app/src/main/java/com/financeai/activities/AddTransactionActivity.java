@@ -46,28 +46,49 @@ public class AddTransactionActivity extends AppCompatActivity {
 
     private void saveTransaction() {
         String title = etTitle.getText().toString().trim();
-        String amountStr = etAmount.getText().toString().trim();
+        String amountStr = etAmount.getText().toString().trim().replace(",", ".");
 
         if (title.isEmpty() || amountStr.isEmpty()) {
             Toast.makeText(this, "Preencha todos os campos", Toast.LENGTH_SHORT).show();
             return;
         }
 
-        double amount = Double.parseDouble(amountStr);
+        double amount;
+        try {
+            amount = Double.parseDouble(amountStr);
+        } catch (NumberFormatException e) {
+            Toast.makeText(this, "Valor inválido", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
         boolean isFixed = rbFixed.isChecked();
         boolean isPredicted = rbPredicted.isChecked();
         String category = spinnerCategory.getSelectedItem().toString();
 
-        Transaction transaction = new Transaction();
-        transaction.setTitle(title);
-        transaction.setAmount(amount);
-        transaction.setCategoryName(category);
-        transaction.setRecurring(isFixed);
-        transaction.setPredicted(isPredicted);
-        transaction.setDate(System.currentTimeMillis());
-        transaction.setExpense(true); // Definido como gasto
-
         Executors.newSingleThreadExecutor().execute(() -> {
+            // Verifica o saldo atual se não for um gasto previsto
+            if (!isPredicted) {
+                double totalIncome = db.transactionDao().getTotalIncome();
+                double totalExpense = db.transactionDao().getTotalExpense();
+                double currentBalance = totalIncome - totalExpense;
+
+                if (amount > currentBalance) {
+                    runOnUiThread(() -> {
+                        Toast.makeText(this, "Saldo insuficiente! Seu saldo atual é: R$ " + String.format(java.util.Locale.getDefault(), "%.2f", currentBalance), Toast.LENGTH_LONG).show();
+                    });
+                    return;
+                }
+            }
+
+            Transaction transaction = new Transaction();
+            transaction.setTitle(title);
+            transaction.setAmount(amount);
+            transaction.setCategoryName(category);
+            transaction.setRecurring(isFixed);
+            transaction.setPredicted(isPredicted);
+            transaction.setDate(System.currentTimeMillis());
+            transaction.setExpense(true); // Definido como gasto
+
             db.transactionDao().insert(transaction);
             runOnUiThread(() -> {
                 Toast.makeText(this, "Gasto salvo com sucesso!", Toast.LENGTH_SHORT).show();

@@ -12,9 +12,9 @@ import com.financeai.activities.MainActivity;
 
 public class NotificationHelper {
 
-    private static final String CHANNEL_ID = "financeai_alerts";
-    private static final String CHANNEL_NAME = "Alertas FinanceAI";
-    private static final String CHANNEL_DESC = "Alertas inteligentes de gastos";
+    private static final String CHANNEL_ID = "vortex_alerts";
+    private static final String CHANNEL_NAME = "Vortex Finance Alerts";
+    private static final String CHANNEL_DESC = "Alertas inteligentes Vortex";
     private static int notificationId = 1000;
 
     public static void createNotificationChannel(Context context) {

@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#0A1210"
+    android:background="@color/bg_dark"
     tools:context=".activities.AddTransactionActivity">
 
     <androidx.core.widget.NestedScrollView
@@ -32,7 +32,7 @@
                     android:background="@drawable/bg_small_card_translucent"
                     android:src="@android:drawable/ic_menu_revert"
                     android:padding="10dp"
-                    app:tint="#26C694" />
+                    app:tint="@color/primary_eco" />
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -58,7 +58,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="Quanto você gastou?"
-                    android:textColor="#26C694"
+                    android:textColor="@color/primary_eco"
                     android:textSize="14sp"
                     android:textAllCaps="true"
                     android:letterSpacing="0.1" />
@@ -74,7 +74,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="R$"
-                        android:textColor="#26C694"
+                        android:textColor="@color/primary_eco"
                         android:textSize="20sp"
                         android:layout_marginBottom="8dp"
                         android:layout_marginEnd="8dp" />
@@ -86,7 +86,7 @@
                         android:minWidth="100dp"
                         android:background="@null"
                         android:hint="0,00"
-                        android:textColorHint="#4026C694"
+                        android:textColorHint="#4000D2FF"
                         android:inputType="numberDecimal"
                         android:textColor="@color/white"
                         android:textSize="42sp"
@@ -101,8 +101,8 @@
                 android:layout_height="wrap_content"
                 android:hint="O que você comprou?"
                 android:textColorHint="@color/text_gray"
-                app:boxStrokeColor="#26C694"
-                app:hintTextColor="#26C694"
+                app:boxStrokeColor="@color/primary_eco"
+                app:hintTextColor="@color/primary_eco"
                 app:boxCornerRadiusBottomEnd="12dp"
                 app:boxCornerRadiusBottomStart="12dp"
                 app:boxCornerRadiusTopEnd="12dp"
@@ -165,7 +165,7 @@
                     android:layout_weight="1"
                     android:text="Pontual"
                     android:textColor="@color/white"
-                    android:buttonTint="#26C694"
+                    android:buttonTint="@color/primary_eco"
                     android:checked="true"
                     android:paddingStart="4dp"
                     android:textSize="12sp" />
@@ -177,7 +177,7 @@
                     android:layout_weight="1"
                     android:text="Fixo"
                     android:textColor="@color/white"
-                    android:buttonTint="#26C694"
+                    android:buttonTint="@color/primary_eco"
                     android:paddingStart="4dp"
                     android:textSize="12sp" />
 
@@ -188,7 +188,7 @@
                     android:layout_weight="1"
                     android:text="Previsto"
                     android:textColor="@color/white"
-                    android:buttonTint="#26C694"
+                    android:buttonTint="@color/primary_eco"
                     android:paddingStart="4dp"
                     android:textSize="12sp" />
             </RadioGroup>
@@ -206,7 +206,7 @@
                 android:layout_marginBottom="16dp"
                 android:background="@drawable/bg_neon_button"
                 android:text="Confirmar Gasto"
-                android:textColor="@color/white"
+                android:textColor="#0F1419"
                 android:textAllCaps="true"
                 android:textSize="16sp"
                 android:textStyle="bold"

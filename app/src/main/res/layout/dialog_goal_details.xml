@@ -28,7 +28,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="4dp"
             android:text="Acompanhe seu progresso real"
-            android:textColor="#A0E9D2"
+            android:textColor="@color/text_gray"
             android:textSize="16sp" />
 
         <!-- Card de Progresso Circular/Destaque -->
@@ -36,7 +36,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="32dp"
-            app:cardBackgroundColor="#0D26C694"
+            app:cardBackgroundColor="#1A00D2FF"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp">
 
@@ -87,7 +87,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="Data Limite Estimada"
-                android:textColor="#26C694"
+                android:textColor="@color/primary_eco"
                 android:textStyle="bold"
                 android:textSize="14sp" />
 
@@ -109,7 +109,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardBackgroundColor="#1A26C694"
+            app:cardBackgroundColor="#1A00D2FF"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp">
 
@@ -144,13 +144,13 @@
             android:layout_width="match_parent"
             android:layout_height="64dp"
             android:layout_marginTop="32dp"
-            android:backgroundTint="#0D26C694"
+            android:backgroundTint="#1A00D2FF"
             android:text="VOLTAR AO PAINEL"
             android:textColor="@color/primary_eco"
             android:textSize="16sp"
             android:textStyle="bold"
             app:cornerRadius="24dp"
-            app:strokeColor="#3326C694"
+            app:strokeColor="#3300D2FF"
             app:strokeWidth="1dp" />
 
         <com.google.android.material.button.MaterialButton

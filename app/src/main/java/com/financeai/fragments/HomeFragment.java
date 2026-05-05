@@ -9,7 +9,9 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.PopupMenu;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -37,16 +39,16 @@ import java.util.concurrent.Executors;
 
 public class HomeFragment extends Fragment {
 
-    private TextView tvBalance, tvMonthTotal, tvSavingsStatus, tvSalaryValue, tvExtraIncomeValue, tvAiInsightText, tvFifthDay;
+    private TextView tvBalance, tvMonthTotal, tvSavingsStatus, tvSalaryValue, tvExtraIncomeValue, tvAiInsightText, tvFifthDay, tvLabelStatus, tvSeeAll, tvWelcome;
     private PieChart pieChart;
     private RecyclerView rvTransactions;
     private Button btnAddExpense, btnManageExpenses;
+    private ImageButton btnMenu;
     private View cardSalary, cardExtraIncome, cardAiInsight;
 
     private AppDatabase db;
     private TransactionAdapter transactionAdapter;
     private ExecutorService executor = Executors.newSingleThreadExecutor();
-    private boolean isCardFlipped = false;
     private boolean showingAnalysis = false;
 
     @Nullable
@@ -59,14 +61,11 @@ public class HomeFragment extends Fragment {
         observeTransactions();
         checkMonthlyReport(); 
         
-        // Adiciona o clique para animação e análise IA
-        view.findViewById(R.id.card_summary).setOnClickListener(v -> toggleCardFeedback());
-        
         return view;
     }
 
     private void toggleCardFeedback() {
-        View cardContent = getView().findViewById(R.id.card_main_content);
+        View cardContent = (getView() != null) ? getView().findViewById(R.id.card_main_content) : null;
         if (cardContent == null) return;
 
         cardContent.animate()
@@ -92,7 +91,7 @@ public class HomeFragment extends Fragment {
         
         // Se for dia 1, verifica se já mostramos o relatório este mês
         if (dayOfMonth == 1) {
-            android.content.SharedPreferences prefs = requireContext().getSharedPreferences("FinanceAI", Context.MODE_PRIVATE);
+            android.content.SharedPreferences prefs = requireContext().getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE);
             String lastReportMonth = prefs.getString("last_report_month", "");
             String currentMonth = (cal.get(java.util.Calendar.MONTH) + 1) + "/" + cal.get(java.util.Calendar.YEAR);
             
@@ -105,6 +104,9 @@ public class HomeFragment extends Fragment {
 
     private void showMonthlyReport() {
         executor.execute(() -> {
+            Context context = getContext();
+            if (context == null) return;
+            
             // Pega o intervalo do mês PASSADO
             java.util.Calendar cal = java.util.Calendar.getInstance();
             cal.add(java.util.Calendar.MONTH, -1);
@@ -118,22 +120,24 @@ public class HomeFragment extends Fragment {
             
             String topCategory = (categories != null && !categories.isEmpty()) ? categories.get(0).categoryName : "N/A";
             
-            requireActivity().runOnUiThread(() -> {
-                new AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
-                    .setTitle("📊 Relatório do Mês Passado")
-                    .setMessage(String.format("No mês passado você:\n\n" +
-                            "• Gastou um total de: %s\n" +
-                            "• Seu maior gasto foi com: %s\n\n" +
-                            "Deseja ver o histórico completo?", 
-                            CurrencyHelper.format(totalSpent), topCategory))
-                    .setPositiveButton("Ver Histórico", (d, w) -> {
-                         if (getActivity() instanceof com.financeai.activities.MainActivity) {
-                             ((com.financeai.activities.MainActivity) getActivity()).goToPage(1);
-                         }
-                    })
-                    .setNegativeButton("Fechar", null)
-                    .show();
-            });
+            android.app.Activity activity = getActivity();
+            if (activity != null && isAdded()) {
+                activity.runOnUiThread(() -> {
+                    Context ctx = getContext();
+                    if (ctx == null) return;
+                    new AlertDialog.Builder(ctx, R.style.Theme_Vortex_Dark)
+                        .setTitle(R.string.monthly_report_title)
+                        .setMessage(getString(R.string.monthly_report_message, 
+                                CurrencyHelper.format(totalSpent), topCategory))
+                        .setPositiveButton(R.string.view_history, (d, w) -> {
+                             if (getActivity() instanceof com.financeai.activities.MainActivity) {
+                                 ((com.financeai.activities.MainActivity) getActivity()).goToPage(1);
+                             }
+                        })
+                        .setNegativeButton(R.string.close, null)
+                        .show();
+                });
+            }
         });
     }
 
@@ -147,14 +151,20 @@ public class HomeFragment extends Fragment {
         tvExtraIncomeValue = view.findViewById(R.id.tv_extra_income_value);
         tvAiInsightText = view.findViewById(R.id.tv_ai_insight_text);
         tvFifthDay = view.findViewById(R.id.tv_fifth_day_label);
+        tvLabelStatus = view.findViewById(R.id.tv_label_status);
+        tvSeeAll = view.findViewById(R.id.tv_see_all);
+        tvWelcome = view.findViewById(R.id.tv_welcome);
         cardSalary = view.findViewById(R.id.card_salary);
         cardExtraIncome = view.findViewById(R.id.card_extra_income);
         cardAiInsight = view.findViewById(R.id.card_ai_insight);
         btnAddExpense = view.findViewById(R.id.btn_add_expense);
         btnManageExpenses = view.findViewById(R.id.btn_manage_expenses);
+        btnMenu = view.findViewById(R.id.btn_menu);
 
         View cardSummary = view.findViewById(R.id.card_summary);
-        cardSummary.setOnClickListener(v -> {
+        cardSummary.setOnClickListener(v -> toggleCardFeedback());
+
+        tvSeeAll.setOnClickListener(v -> {
             if (getActivity() instanceof com.financeai.activities.MainActivity) {
                 ((com.financeai.activities.MainActivity) getActivity()).goToPage(1);
             }
@@ -181,65 +191,37 @@ public class HomeFragment extends Fragment {
             }
         });
 
-        applyDynamicColors(view);
+        btnMenu.setOnClickListener(this::showPopupMenu);
     }
 
-    private void applyDynamicColors(View view) {
-        int primaryColor = PreferencesHelper.getPrimaryColor(requireContext());
-        int primaryLight = PreferencesHelper.getPrimaryLightColor(requireContext());
-        int surfaceColor = PreferencesHelper.getSurfaceColor(requireContext());
-
-        // Botão Adicionar
-        btnAddExpense.setBackgroundTintList(android.content.res.ColorStateList.valueOf(primaryColor));
-
-        // Cards de Renda e Insight (Bordas)
-        com.google.android.material.card.MaterialCardView cSalary = view.findViewById(R.id.card_salary);
-        com.google.android.material.card.MaterialCardView cExtra = view.findViewById(R.id.card_extra_income);
-        com.google.android.material.card.MaterialCardView cInsight = view.findViewById(R.id.card_ai_insight);
+    private void showPopupMenu(View view) {
+        PopupMenu popup = new PopupMenu(requireContext(), view);
+        popup.getMenuInflater().inflate(R.menu.home_menu, popup.getMenu());
         
-        cSalary.setStrokeColor(primaryLight);
-        cExtra.setStrokeColor(primaryLight);
-        cInsight.setStrokeColor(primaryLight);
-        
-        cSalary.setCardBackgroundColor(surfaceColor);
-        cExtra.setCardBackgroundColor(surfaceColor);
-        cInsight.setCardBackgroundColor(surfaceColor);
-
-        // Valores de Renda
-        tvSalaryValue.setTextColor(primaryLight);
-        tvExtraIncomeValue.setTextColor(primaryLight);
-
-        // Ícone Insight - Reusando a variável cInsight para evitar múltiplos lookups
-        if (cInsight instanceof ViewGroup) {
-            ViewGroup vg = (ViewGroup) cInsight;
-            for (int i = 0; i < vg.getChildCount(); i++) {
-                View child = vg.getChildAt(i);
-                if (child instanceof ViewGroup) {
-                    ViewGroup innerVg = (ViewGroup) child;
-                    for (int j = 0; j < innerVg.getChildCount(); j++) {
-                        View innerChild = innerVg.getChildAt(j);
-                        if (innerChild instanceof ImageView) {
-                            ((ImageView) innerChild).setColorFilter(primaryLight);
-                        }
-                    }
-                }
+        popup.setOnMenuItemClickListener(item -> {
+            int id = item.getItemId();
+            if (id == R.id.menu_settings) {
+                // Navegar para configurações
+                return true;
+            } else if (id == R.id.menu_export) {
+                // Ação de exportar
+                return true;
+            } else if (id == R.id.menu_about) {
+                // Ação sobre
+                return true;
             }
-        }
-
-        // Card Principal (Gradient)
-        View cardMain = view.findViewById(R.id.card_main_content);
-        if (cardMain != null) {
-            android.graphics.drawable.GradientDrawable gd = new android.graphics.drawable.GradientDrawable(
-                android.graphics.drawable.GradientDrawable.Orientation.TOP_BOTTOM,
-                new int[] { primaryColor, PreferencesHelper.getPrimaryDarkColor(requireContext()) }
-            );
-            gd.setCornerRadius(0f); // O CardView já tem corner radius
-            cardMain.setBackground(gd);
-        }
+            return false;
+        });
+        popup.show();
     }
+
+
 
     private void loadDashboardData() {
         executor.execute(() -> {
+            Context context = getContext();
+            if (context == null || !isAdded()) return;
+
             long[] month = SpendingAnalyzer.getMonthRange();
             
             // BUSCA DADOS REAIS
@@ -247,8 +229,8 @@ public class HomeFragment extends Fragment {
             double realExpensesOnly = db.transactionDao().getTotalRealExpenseByPeriod(month[0], month[1]);
             double investmentsOnly = totalExpensesIncludingInvestments - realExpensesOnly;
 
-            float salary = requireContext().getSharedPreferences("FinanceAI", Context.MODE_PRIVATE).getFloat("salary", 0f);
-            float extra = requireContext().getSharedPreferences("FinanceAI", Context.MODE_PRIVATE).getFloat("extra", 0f);
+            double salary = PreferencesHelper.getSalary(context);
+            double extra = context.getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE).getFloat("extra", 0f);
             double totalIncome = salary + extra;
             
             // O Saldo Disponível é a Renda menos TUDO (incluindo o que você já guardou)
@@ -275,8 +257,9 @@ public class HomeFragment extends Fragment {
 
             String statusTitle = "Meta de Aporte Mensal";
             String statusValue = CurrencyHelper.format(totalMetaEffort);
-            int primaryColor = PreferencesHelper.getPrimaryColor(requireContext());
-            int statusColor = PreferencesHelper.getPrimaryLightColor(requireContext());
+            int primaryColor = PreferencesHelper.getPrimaryColor(context);
+            int primaryLight = PreferencesHelper.getPrimaryLightColor(context);
+            int statusColor = primaryLight;
 
             if (totalIncome <= 0) {
                 statusValue = "Defina sua renda";
@@ -292,10 +275,10 @@ public class HomeFragment extends Fragment {
             String aiInsight;
             if (showingAnalysis) {
                 if (investmentsOnly > 0) {
-                    aiInsight = String.format("Análise IA: Você já protegeu %s este mês. Isso não é gasto, é patrimônio! Seu custo de vida real está em %.0f%% da sua renda.", 
+                    aiInsight = String.format("Vortex AI: Você já protegeu %s este mês. Isso não é gasto, é patrimônio! Seu custo de vida real está em %.0f%% da sua renda.", 
                         CurrencyHelper.format(investmentsOnly), (realExpensesOnly/totalIncome)*100);
                 } else {
-                    aiInsight = "Análise IA: Seus gastos estão focados em consumo. Tente usar o botão 'Investir Sobra' para começar seu patrimônio.";
+                    aiInsight = "Vortex AI: Seus gastos estão focados em consumo. Tente usar o botão 'Investir Sobra' para começar seu patrimônio.";
                 }
             } else {
                 if (totalIncome <= 0) aiInsight = "Defina sua renda nos cards abaixo!";
@@ -310,7 +293,7 @@ public class HomeFragment extends Fragment {
                             break;
                         }
                     }
-                    aiInsight = String.format("Seu maior gasto real é com %s.", topCat);
+                    aiInsight = String.format("Vortex AI: Seu maior gasto real é com %s.", topCat);
                 } else aiInsight = "Adicione seus primeiros gastos!";
             }
 
@@ -320,31 +303,47 @@ public class HomeFragment extends Fragment {
             final String finalAiInsight = aiInsight;
             final String fifthDay = DateHelper.getFifthWorkingDay();
             
-            if (isAdded()) {
-                requireActivity().runOnUiThread(() -> {
+            android.app.Activity activity = getActivity();
+            if (activity != null && isAdded()) {
+                activity.runOnUiThread(() -> {
+                    if (getView() == null) return;
+                    
+                    String userName = PreferencesHelper.getUserName(context);
+                    tvWelcome.setText(getString(R.string.welcome_user, userName));
+
+                    boolean hideBalance = PreferencesHelper.isHideBalance(context);
+                    if (hideBalance) {
+                        tvBalance.setText("••••");
+                        tvMonthTotal.setText("••••");
+                        tvSalaryValue.setText("••••");
+                        tvExtraIncomeValue.setText("••••");
+                        tvSavingsStatus.setText("••••");
+                    } else {
+                        tvBalance.setText(balance < 0 ? "R$ 0,00" : CurrencyHelper.format(balance));
+                        // Mostra o gasto REAL (sem investimentos) para não punir quem poupa
+                        tvMonthTotal.setText("-" + CurrencyHelper.format(realExpensesOnly));
+                        tvSalaryValue.setText(CurrencyHelper.format(salary));
+                        tvExtraIncomeValue.setText(CurrencyHelper.format(extra));
+                        tvSavingsStatus.setText(finalStatusValue);
+                    }
+
                     tvAiInsightText.setText(finalAiInsight);
                     tvFifthDay.setText("Recebe em: " + fifthDay);
-                    tvBalance.setText(balance < 0 ? "R$ 0,00" : CurrencyHelper.format(balance));
-                    
-                    // Mostra o gasto REAL (sem investimentos) para não punir quem poupa
-                    tvMonthTotal.setText("-" + CurrencyHelper.format(realExpensesOnly)); 
-                    
+
                     // Adiciona um indicador visual pequeno se houver investimentos
-                    if (investmentsOnly > 0) {
-                        tvMonthTotal.setHint("Excluindo " + CurrencyHelper.format(investmentsOnly) + " investidos");
+                    if (investmentsOnly > 0 && !hideBalance) {
+                        tvMonthTotal.setAlpha(0.7f);
                     } else {
-                        tvMonthTotal.setHint(null);
+                        tvMonthTotal.setAlpha(1.0f);
                     }
                     
                     // Atualiza o Label e o Status
-                    View labelStatus = getView().findViewById(R.id.tv_label_status);
-                    if (labelStatus instanceof TextView) ((TextView)labelStatus).setText(finalStatusTitle);
+                    if (tvLabelStatus != null) tvLabelStatus.setText(finalStatusTitle);
                     
-                    tvSavingsStatus.setText(finalStatusValue);
-                    tvSavingsStatus.setTextColor(finalStatusColor);
+                    if (!hideBalance) {
+                        tvSavingsStatus.setTextColor(finalStatusColor);
+                    }
                     
-                    tvSalaryValue.setText(CurrencyHelper.format(salary));
-                    tvExtraIncomeValue.setText(CurrencyHelper.format(extra));
                     setupPieChart(catSummary, totalIncome, totalExpensesIncludingInvestments);
                 });
             }
@@ -447,20 +446,20 @@ public class HomeFragment extends Fragment {
         TextView btnClear = dialogView.findViewById(R.id.btn_clear_income); // Agora é um TextView no novo layout
 
         if (isSalary) {
-            tvTitle.setText("Meu Salário");
-            tvSubtitle.setText("Informe seu ganho mensal fixo");
+            tvTitle.setText(R.string.my_salary);
+            tvSubtitle.setText(R.string.salary_subtitle);
             ivIcon.setImageResource(R.drawable.salario);
         } else {
-            tvTitle.setText("Renda Extra");
-            tvSubtitle.setText("Informe ganhos adicionais deste mês");
+            tvTitle.setText(R.string.extra_income);
+            tvSubtitle.setText(R.string.extra_income_subtitle);
             // Usa o ícone de outros/lazer para renda extra se não tiver um específico
             ivIcon.setImageResource(R.drawable.outros);
         }
 
-        float currentVal = requireContext().getSharedPreferences("FinanceAI", Context.MODE_PRIVATE)
-                .getFloat(isSalary ? "salary" : "extra", 0f);
+        double currentVal = isSalary ? PreferencesHelper.getSalary(requireContext()) : 
+                requireContext().getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE).getFloat("extra", 0f);
 
-        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
+        AlertDialog dialog = new AlertDialog.Builder(requireContext(), R.style.Theme_Vortex_Dark)
                 .setView(dialogView)
                 .create();
         
@@ -487,7 +486,12 @@ public class HomeFragment extends Fragment {
     }
 
     private void saveIncome(boolean isSalary, double value) {
-        requireContext().getSharedPreferences("FinanceAI", Context.MODE_PRIVATE).edit().putFloat(isSalary ? "salary" : "extra", (float) value).apply();
+        if (isSalary) {
+            PreferencesHelper.setSalary(requireContext(), value);
+        } else {
+            requireContext().getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE)
+                .edit().putFloat("extra", (float) value).apply();
+        }
 
         // NOVO: Adiciona ou Atualiza como uma transação de entrada no banco de dados para efeito cascata
         executor.execute(() -> {
@@ -519,9 +523,9 @@ public class HomeFragment extends Fragment {
     }
 
     private void showDeleteDialog(com.financeai.models.Transaction transaction) {
-        new AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
-            .setTitle("Excluir")
-            .setPositiveButton("Sim", (d, w) -> executor.execute(() -> {
+        new AlertDialog.Builder(requireContext(), R.style.Theme_Vortex_Dark)
+            .setTitle(R.string.delete_action)
+            .setPositiveButton(R.string.yes, (d, w) -> executor.execute(() -> {
                 db.transactionDao().delete(transaction);
                 loadDashboardData();
             })).show();

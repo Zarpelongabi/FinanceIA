@@ -38,7 +38,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="Nome do sonho"
-            app:boxBackgroundColor="#12241F"
+            app:boxBackgroundColor="#151C27"
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
@@ -48,7 +48,7 @@
             app:boxStrokeColor="@color/primary_eco"
             app:startIconDrawable="@android:drawable/ic_menu_edit"
             app:startIconTint="@color/primary_eco"
-            app:hintTextColor="#26C694">
+            app:hintTextColor="@color/primary_eco">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_goal_title"
@@ -66,7 +66,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Quanto deseja guardar? (R$)"
-            app:boxBackgroundColor="#12241F"
+            app:boxBackgroundColor="#151C27"
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
@@ -76,7 +76,7 @@
             app:boxStrokeColor="@color/primary_eco"
             app:startIconDrawable="@android:drawable/ic_menu_send"
             app:startIconTint="@color/primary_eco"
-            app:hintTextColor="#26C694">
+            app:hintTextColor="@color/primary_eco">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_goal_target"
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="16dp"
             android:hint="Em quantos meses?"
-            app:boxBackgroundColor="#12241F"
+            app:boxBackgroundColor="#151C27"
             app:boxCornerRadiusTopStart="16dp"
             app:boxCornerRadiusTopEnd="16dp"
             app:boxCornerRadiusBottomStart="16dp"
@@ -105,7 +105,7 @@
             app:boxStrokeColor="@color/primary_eco"
             app:startIconDrawable="@android:drawable/ic_menu_today"
             app:startIconTint="@color/primary_eco"
-            app:hintTextColor="#26C694">
+            app:hintTextColor="@color/primary_eco">
 
             <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/et_goal_deadline"
@@ -116,13 +116,13 @@
                 android:paddingVertical="20dp"/>
         </com.google.android.material.textfield.TextInputLayout>
 
-        <!-- Recomendação FinanceAI -->
+        <!-- Recomendação Vortex AI -->
         <androidx.cardview.widget.CardView
             android:id="@+id/card_recommendation"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            app:cardBackgroundColor="#0D26C694"
+            app:cardBackgroundColor="#1A00D2FF"
             app:cardCornerRadius="24dp"
             app:cardElevation="0dp">
 
@@ -136,7 +136,7 @@
                     android:id="@+id/tv_rec_title"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="💡 Recomendação FinanceAI"
+                    android:text="@string/vortex_ai_recommendation"
                     android:textColor="@color/primary_eco"
                     android:textStyle="bold"
                     android:textSize="13sp" />
@@ -157,7 +157,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="4dp"
                     android:text="Este é o valor mensal necessário."
-                    android:textColor="#A0E9D2"
+                    android:textColor="@color/text_gray"
                     android:textSize="12sp" />
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -168,10 +168,10 @@
             android:layout_height="60dp"
             android:layout_marginTop="32dp"
             android:text="Confirmar"
-            android:textColor="#0A1210"
+            android:textColor="@color/bg_dark"
             android:textSize="16sp"
             android:textStyle="bold"
-            app:backgroundTint="#26C694"
+            app:backgroundTint="@color/primary_eco"
             app:cornerRadius="20dp" />
 
         <Button

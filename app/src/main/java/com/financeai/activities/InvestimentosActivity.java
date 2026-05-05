@@ -53,7 +53,7 @@ public class InvestimentosActivity extends AppCompatActivity {
         
         setContentView(R.layout.activity_investimentos);
 
-        prefs = getSharedPreferences("FinanceAI", MODE_PRIVATE);
+        prefs = getSharedPreferences("vortex_prefs", MODE_PRIVATE);
         db = AppDatabase.getInstance(this);
         
         initViews();
@@ -83,7 +83,7 @@ public class InvestimentosActivity extends AppCompatActivity {
         historyAdapter = new TransactionAdapter(new TransactionAdapter.OnTransactionClickListener() {
             @Override public void onTransactionClick(Transaction transaction) {}
             @Override public void onTransactionLongClick(Transaction transaction) {
-                new AlertDialog.Builder(InvestimentosActivity.this, R.style.Theme_FinanceAI_Dark)
+                new AlertDialog.Builder(InvestimentosActivity.this, R.style.Theme_Vortex_Dark)
                     .setTitle("Excluir Aporte?")
                     .setMessage("Isso removerá o registro mas você precisará ajustar o saldo manualmente se desejar.")
                     .setPositiveButton("Excluir", (d, w) -> executor.execute(() -> {
@@ -158,7 +158,7 @@ public class InvestimentosActivity extends AppCompatActivity {
                 RecyclerView rv = view.findViewById(R.id.rv_select_meta);
                 rv.setLayoutManager(new LinearLayoutManager(this));
                 
-                AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
+                AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
                         .setView(view)
                         .create();
 
@@ -214,7 +214,7 @@ public class InvestimentosActivity extends AppCompatActivity {
             double remainingInitial = targetMeta.getValorObjetivo() - targetMeta.getValorAtual();
             double monthlyInitial = remainingInitial / months;
             
-            tvRecTitle.setText("💡 Recomendação FinanceAI");
+            tvRecTitle.setText("@string/vortex_ai_recommendation");
             tvMonthly.setText(com.financeai.utils.CurrencyHelper.format(Math.max(0, monthlyInitial)) + " / mês");
             tvDesc.setText("Este é o esforço mensal necessário para atingir sua meta no prazo.");
 
@@ -241,7 +241,7 @@ public class InvestimentosActivity extends AppCompatActivity {
             view.findViewById(R.id.card_recommendation).setVisibility(View.GONE);
         }
 
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
                 .setView(view)
                 .create();
 
@@ -313,12 +313,12 @@ public class InvestimentosActivity extends AppCompatActivity {
             ((Button)view.findViewById(R.id.btn_save_goal)).setText("Investir Agora");
             ((Button)view.findViewById(R.id.btn_save_goal)).setBackgroundTintList(android.content.res.ColorStateList.valueOf(PreferencesHelper.getPrimaryColor(this)));
             
-            // Customizando a Recomendação FinanceAI para 80%
+            // Customizando a Vortex AI para 80%
             tvRecTitle.setText("💡 Recomendação de Alocação (80%)");
             tvMonthlySaving.setText(com.financeai.utils.CurrencyHelper.format(recomendacao80));
             tvDesc.setText("Investir 80% da sua sobra mantém uma reserva de segurança de 20%.");
 
-            AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
+            AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
                     .setView(view)
                     .create();
 

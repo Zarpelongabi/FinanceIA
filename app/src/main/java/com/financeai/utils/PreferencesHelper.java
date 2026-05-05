@@ -5,7 +5,7 @@ import android.content.SharedPreferences;
 
 public class PreferencesHelper {
 
-    private static final String PREFS_NAME = "financeai_prefs";
+    private static final String PREFS_NAME = "vortex_prefs";
     private static final String KEY_MONTHLY_BUDGET = "monthly_budget";
     private static final String KEY_ECONOMY_MODE = "economy_mode";
     private static final String KEY_DARK_THEME = "dark_theme";
@@ -15,6 +15,9 @@ public class PreferencesHelper {
     private static final String KEY_FIRST_RUN = "first_run";
     private static final String KEY_BALANCE = "current_balance";
     private static final String KEY_PRIMARY_COLOR = "primary_color";
+    private static final String KEY_HIDE_BALANCE = "hide_balance";
+    private static final String KEY_SALARY = "salary";
+    private static final String KEY_LAST_SALARY_MONTH = "last_salary_month";
 
     private static SharedPreferences getPrefs(Context context) {
         return context.getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -97,6 +100,32 @@ public class PreferencesHelper {
 
     public static void setPrimaryColor(Context context, int color) {
         getPrefs(context).edit().putInt(KEY_PRIMARY_COLOR, color).apply();
+    }
+
+    public static boolean isHideBalance(Context context) {
+        return getPrefs(context).getBoolean(KEY_HIDE_BALANCE, false);
+    }
+
+    public static void setHideBalance(Context context, boolean hide) {
+        getPrefs(context).edit().putBoolean(KEY_HIDE_BALANCE, hide).apply();
+    }
+
+    public static double getSalary(Context context) {
+        return (double) getPrefs(context).getFloat(KEY_SALARY, 0f);
+    }
+
+    public static void setSalary(Context context, double salary) {
+        getPrefs(context).edit()
+            .putFloat(KEY_SALARY, (float) salary)
+            .apply();
+    }
+
+    public static String getLastSalaryMonth(Context context) {
+        return getPrefs(context).getString(KEY_LAST_SALARY_MONTH, "");
+    }
+
+    public static void setLastSalaryMonth(Context context, String monthYear) {
+        getPrefs(context).edit().putString(KEY_LAST_SALARY_MONTH, monthYear).apply();
     }
 
     // Retorna uma versão mais clara da cor primária para gradientes e destaques

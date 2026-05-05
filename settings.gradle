@@ -17,5 +17,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "financeai"
+rootProject.name = "Vortex Finance"
 include ':app'

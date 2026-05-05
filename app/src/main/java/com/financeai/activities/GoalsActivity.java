@@ -75,7 +75,7 @@ public class GoalsActivity extends AppCompatActivity {
         etTarget.addTextChangedListener(watcher);
         etDeadline.addTextChangedListener(watcher);
 
-        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
+        AlertDialog dialog = new AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
                 .setView(dialogView)
                 .create();
 

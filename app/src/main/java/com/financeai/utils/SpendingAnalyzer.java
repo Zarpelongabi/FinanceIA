@@ -195,12 +195,24 @@ public class SpendingAnalyzer {
     }
 
     public static long[] getMonthRange() {
-        Calendar start = Calendar.getInstance();
+        return getMonthRange(Calendar.getInstance());
+    }
+
+    public static long[] getMonthRange(Calendar cal) {
+        Calendar start = (Calendar) cal.clone();
         start.set(Calendar.DAY_OF_MONTH, 1);
         start.set(Calendar.HOUR_OF_DAY, 0);
         start.set(Calendar.MINUTE, 0);
         start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
 
-        return new long[]{start.getTimeInMillis(), System.currentTimeMillis()};
+        Calendar end = (Calendar) start.clone();
+        end.set(Calendar.DAY_OF_MONTH, end.getActualMaximum(Calendar.DAY_OF_MONTH));
+        end.set(Calendar.HOUR_OF_DAY, 23);
+        end.set(Calendar.MINUTE, 59);
+        end.set(Calendar.SECOND, 59);
+        end.set(Calendar.MILLISECOND, 999);
+
+        return new long[]{start.getTimeInMillis(), end.getTimeInMillis()};
     }
 }

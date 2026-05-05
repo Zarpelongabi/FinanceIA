@@ -51,10 +51,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="@color/surface_emerald"
+                app:cardBackgroundColor="@color/bg_card"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#2A3D38"
+                app:strokeColor="#3300D2FF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -63,61 +63,175 @@
                     android:orientation="vertical"
                     android:padding="16dp">
 
-                    <TextView
-                        android:layout_width="wrap_content"
+                    <LinearLayout
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:text="Cor Principal do App"
-                        android:textColor="@color/white"
-                        android:textSize="16sp" />
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Tema Escuro"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Reduz o cansaço visual"
+                                android:textColor="@color/text_gray"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switch_theme"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:thumbTint="@color/white"
+                            app:trackTint="@color/primary_eco" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#1AFFFFFF" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_change_name"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Seu Nome"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/tv_current_username"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Vortex User"
+                                android:textColor="@color/text_gray"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            app:tint="@color/text_gray" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#1AFFFFFF" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_marginTop="16dp"
                         android:orientation="horizontal"
-                        android:gravity="center">
+                        android:gravity="center_vertical">
 
-                        <View
-                            android:id="@+id/color_emerald"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
-                            android:layout_margin="8dp"
-                            android:background="@drawable/circle_color_selector"
-                            android:backgroundTint="@color/accent_emerald"
-                            android:clickable="true"
-                            android:focusable="true" />
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
 
-                        <View
-                            android:id="@+id/color_blue"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
-                            android:layout_margin="8dp"
-                            android:background="@drawable/circle_color_selector"
-                            android:backgroundTint="@color/accent_blue"
-                            android:clickable="true"
-                            android:focusable="true" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Ocultar Saldo"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
 
-                        <View
-                            android:id="@+id/color_purple"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
-                            android:layout_margin="8dp"
-                            android:background="@drawable/circle_color_selector"
-                            android:backgroundTint="@color/accent_purple"
-                            android:clickable="true"
-                            android:focusable="true" />
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Mascarar valores na tela inicial"
+                                android:textColor="@color/text_gray"
+                                android:textSize="12sp" />
+                        </LinearLayout>
 
-                        <View
-                            android:id="@+id/color_orange"
-                            android:layout_width="45dp"
-                            android:layout_height="45dp"
-                            android:layout_margin="8dp"
-                            android:background="@drawable/circle_color_selector"
-                            android:backgroundTint="@color/accent_orange"
-                            android:clickable="true"
-                            android:focusable="true" />
-
+                        <com.google.android.material.materialswitch.MaterialSwitch
+                            android:id="@+id/switch_hide_balance"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            app:thumbTint="@color/white"
+                            app:trackTint="@color/primary_eco" />
                     </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:layout_marginTop="16dp"
+                        android:layout_marginBottom="16dp"
+                        android:background="#1AFFFFFF" />
+
+                    <LinearLayout
+                        android:id="@+id/btn_monthly_budget"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal"
+                        android:gravity="center_vertical"
+                        android:clickable="true"
+                        android:focusable="true"
+                        android:background="?attr/selectableItemBackground">
+
+                        <LinearLayout
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:orientation="vertical">
+
+                            <TextView
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="Orçamento Mensal"
+                                android:textColor="@color/white"
+                                android:textSize="16sp" />
+
+                            <TextView
+                                android:id="@+id/tv_current_budget"
+                                android:layout_width="wrap_content"
+                                android:layout_height="wrap_content"
+                                android:text="R$ 0,00"
+                                android:textColor="@color/text_gray"
+                                android:textSize="12sp" />
+                        </LinearLayout>
+
+                        <ImageView
+                            android:layout_width="20dp"
+                            android:layout_height="20dp"
+                            android:src="@android:drawable/ic_menu_edit"
+                            app:tint="@color/text_gray" />
+                    </LinearLayout>
+
                 </LinearLayout>
             </com.google.android.material.card.MaterialCardView>
 
@@ -140,10 +254,10 @@
                 android:layout_height="wrap_content"
                 android:layout_marginTop="12dp"
                 android:layout_marginBottom="24dp"
-                app:cardBackgroundColor="@color/surface_emerald"
+                app:cardBackgroundColor="@color/bg_card"
                 app:cardCornerRadius="16dp"
                 app:cardElevation="0dp"
-                app:strokeColor="#2A3D38"
+                app:strokeColor="#3300D2FF"
                 app:strokeWidth="1dp">
 
                 <LinearLayout
@@ -223,6 +337,65 @@
                 app:cornerRadius="16dp"
                 app:icon="@android:drawable/ic_menu_add"
                 app:iconTint="@color/primary_eco" />
+
+            <!-- Seção Créditos -->
+            <TextView
+                android:id="@+id/tv_title_credits"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="32dp"
+                android:text="Créditos"
+                android:textColor="@color/primary_eco"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                android:textAllCaps="true"
+                android:letterSpacing="0.1" />
+
+            <com.google.android.material.card.MaterialCardView
+                android:id="@+id/card_credits"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="32dp"
+                app:cardBackgroundColor="@color/bg_card"
+                app:cardCornerRadius="16dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#3300D2FF"
+                app:strokeWidth="1dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:padding="16dp">
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:text="Desenvolvido por:"
+                        android:textColor="@color/text_gray"
+                        android:textSize="12sp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="4dp"
+                        android:text="Gabriel Zarpelon\nDavi Camillo"
+                        android:textColor="@color/white"
+                        android:textSize="16sp"
+                        android:textStyle="bold"
+                        android:lineSpacingExtra="4dp" />
+
+                    <TextView
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="12dp"
+                        android:text="@string/copyright_vortex"
+                        android:textColor="@color/text_gray"
+                        android:textSize="10sp"
+                        android:gravity="center" />
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
 
         </LinearLayout>
     </androidx.core.widget.NestedScrollView>

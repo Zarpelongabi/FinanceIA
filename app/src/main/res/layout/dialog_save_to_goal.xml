@@ -21,7 +21,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="8dp"
         android:text="Saldo disponível: R$ 0,00"
-        android:textColor="#A0E9D2"
+        android:textColor="@color/text_gray"
         android:textSize="14sp" />
 
     <TextView
@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:hint="Quanto quer guardar? (R$)"
-        app:boxBackgroundColor="#0D26C694"
+        app:boxBackgroundColor="#1A00D2FF"
         app:boxCornerRadiusTopStart="16dp"
         app:boxCornerRadiusTopEnd="16dp"
         app:boxCornerRadiusBottomStart="16dp"
@@ -70,7 +70,7 @@
         android:layout_width="match_parent"
         android:layout_height="64dp"
         android:layout_marginTop="32dp"
-        android:backgroundTint="#26C694"
+        android:backgroundTint="@color/primary_eco"
         android:text="CONFIRMAR DEPÓSITO"
         android:textColor="@color/bg_dark"
         android:textStyle="bold"

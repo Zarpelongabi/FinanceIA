@@ -45,15 +45,15 @@ public class HistoryActivity extends AppCompatActivity {
     }
 
     private void showDeleteDialog(com.financeai.models.Transaction transaction) {
-        new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_FinanceAI_Dark)
-            .setTitle("Excluir Lançamento")
-            .setMessage("Deseja realmente apagar este registro?")
-            .setPositiveButton("Excluir", (dialog, which) -> {
+        new androidx.appcompat.app.AlertDialog.Builder(this, R.style.Theme_Vortex_Dark)
+            .setTitle(R.string.delete_entry_title)
+            .setMessage(R.string.delete_entry_message)
+            .setPositiveButton(R.string.delete_action, (dialog, which) -> {
                 Executors.newSingleThreadExecutor().execute(() -> {
                     db.transactionDao().delete(transaction);
                 });
             })
-            .setNegativeButton("Manter", null)
+            .setNegativeButton(R.string.keep_action, null)
             .show();
     }
 

@@ -48,7 +48,7 @@ public class GoalsFragment extends Fragment {
         android.widget.Button btnClose = dialogView.findViewById(R.id.btn_close_detail);
         android.widget.Button btnDelete = dialogView.findViewById(R.id.btn_delete_goal_detail);
 
-        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_Vortex_Dark)
                 .setView(dialogView)
                 .create();
 
@@ -90,7 +90,7 @@ public class GoalsFragment extends Fragment {
         btnClose.setOnClickListener(v -> dialog.dismiss());
         
         btnDelete.setOnClickListener(v -> {
-            new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
+            new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_Vortex_Dark)
                 .setTitle("Excluir Meta")
                 .setMessage("Deseja realmente apagar esta meta?")
                 .setPositiveButton("Sim, excluir", (d, w) -> {
@@ -115,7 +115,7 @@ public class GoalsFragment extends Fragment {
         android.widget.Button btnSave = dialogView.findViewById(R.id.btn_save_goal);
         android.widget.Button btnCancel = dialogView.findViewById(R.id.btn_cancel_goal);
 
-        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_FinanceAI_Dark)
+        androidx.appcompat.app.AlertDialog dialog = new androidx.appcompat.app.AlertDialog.Builder(requireContext(), R.style.Theme_Vortex_Dark)
                 .setView(dialogView)
                 .create();
 

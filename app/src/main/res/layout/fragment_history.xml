@@ -11,10 +11,23 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginStart="16dp"
+        android:layout_marginTop="16dp"
         android:text="Histórico Completo"
         android:textColor="@color/white"
         android:textSize="20sp"
         android:textStyle="bold" />
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tab_months"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/bg_dark"
+        app:tabTextColor="@color/text_gray"
+        app:tabSelectedTextColor="@color/primary_eco"
+        app:tabIndicatorColor="@color/primary_eco"
+        app:tabMode="scrollable"
+        app:tabRippleColor="@null"
+        android:layout_marginBottom="8dp" />
 
     <TextView
         android:layout_width="wrap_content"

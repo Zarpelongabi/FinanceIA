@@ -7,7 +7,7 @@ import android.os.Build;
 import com.google.firebase.FirebaseApp;
 
 public class FinanceAIApp extends Application {
-    public static final String CHANNEL_ID = "finance_alerts";
+    public static final String CHANNEL_ID = "vortex_alerts";
 
     @Override
     public void onCreate() {
@@ -20,10 +20,10 @@ public class FinanceAIApp extends Application {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             NotificationChannel channel = new NotificationChannel(
                     CHANNEL_ID,
-                    "Finance Alerts",
+                    "Vortex Finance Alerts",
                     NotificationManager.IMPORTANCE_DEFAULT
             );
-            channel.setDescription("Notifications for budget goals and spending alerts");
+            channel.setDescription("Alertas inteligentes Vortex");
             
             NotificationManager manager = getSystemService(NotificationManager.class);
             if (manager != null) {

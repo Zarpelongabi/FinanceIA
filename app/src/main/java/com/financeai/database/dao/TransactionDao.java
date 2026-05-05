@@ -38,6 +38,12 @@ public interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE date >= :startDate AND isPredicted = 0")
     LiveData<List<Transaction>> getTransactionsSince(long startDate);
 
+    @Query("SELECT SUM(amount) FROM transactions WHERE isExpense = 0 AND isPredicted = 0")
+    double getTotalIncome();
+
+    @Query("SELECT SUM(amount) FROM transactions WHERE isExpense = 1 AND isPredicted = 0")
+    double getTotalExpense();
+
     @Query("SELECT SUM(amount) FROM transactions WHERE date BETWEEN :start AND :end AND isExpense = 0 AND isPredicted = 0")
     double getTotalIncomeByPeriod(long start, long end);
 
