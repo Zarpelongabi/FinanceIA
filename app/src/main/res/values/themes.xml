@@ -44,6 +44,11 @@
         <item name="android:padding">@dimen/card_padding</item>
     </style>
 
+    <style name="GlassmorphicCard.Transaction">
+        <item name="android:background">@drawable/bg_glassmorphic_card</item>
+        <item name="android:padding">16dp</item>
+    </style>
+
     <!-- ========== TEXT STYLES ========== -->
     <style name="TextHeading">
         <item name="android:textColor">@color/text_white</item>

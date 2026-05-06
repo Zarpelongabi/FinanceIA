@@ -59,6 +59,12 @@ public class TransacaoAdapter extends RecyclerView.Adapter<TransacaoAdapter.Tran
 
         int iconeRes = getIconeCategoria(holder.itemView.getContext(), atual.getCategoriaNome());
         holder.ivIcone.setImageResource(iconeRes);
+        holder.ivIcone.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.white)));
+
+        // Se for receita (exemplo simples se valor for positivo, embora o layout acima force "-")
+        if (atual.getValor() > 0 && atual.getCategoriaNome().toLowerCase().contains("salário")) {
+             holder.ivIcone.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.primary_eco)));
+        }
 
         // Clique simples desativado por padrão UX
         holder.itemView.setOnLongClickListener(v -> {

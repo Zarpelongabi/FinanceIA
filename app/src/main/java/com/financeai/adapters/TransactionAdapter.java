@@ -61,10 +61,7 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         
         holder.textViewTitle.setText(title);
         
-        // Limpa tint para mostrar cores originais das imagens PNG
-        holder.imageViewIcon.setImageTintList(null);
-        
-        // Ajuste: Cores e Ícones
+        // Ajuste: Cores e Ícones com Tint para manter o tema Vortex
         String cat = currentTransaction.getCategoryName() != null ? currentTransaction.getCategoryName().toLowerCase() : "";
         boolean isInvestment = cat.contains("invest") || cat.contains("poup") || cat.contains("reserva");
 
@@ -73,11 +70,14 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.invest_purple));
             
             holder.imageViewIcon.setImageResource(R.drawable.investimento);
+            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.invest_purple)));
         } else if (currentTransaction.isExpense()) {
             holder.textViewAmount.setText("-" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.red_negative));
             
-            // Ícone da categoria para gastos
+            // Ícone da categoria para gastos - Usamos tint branco/cinza para não conflitar com o fundo
+            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.white)));
+            
             Category category = categoryMap.get(currentTransaction.getCategoryName());
             if (category != null && category.getIconPath() != null) {
                 Glide.with(holder.itemView.getContext())
@@ -91,8 +91,9 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
             holder.textViewAmount.setText("+" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.green_positive));
             
-            // Ícone salario.png para ganhos
+            // Ícone salario.png para ganhos - Aplicamos o tint Cyan (primary_eco)
             holder.imageViewIcon.setImageResource(R.drawable.salario);
+            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.primary_eco)));
         }
 
         holder.textViewDate.setText(dateFormat.format(new Date(currentTransaction.getDate())) + " · " + currentTransaction.getCategoryName());

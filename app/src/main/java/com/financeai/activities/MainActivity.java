@@ -23,7 +23,6 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        // Aplica a cor personalizada antes de criar a view
         applyCustomColor();
         
         super.onCreate(savedInstanceState);
@@ -143,14 +142,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyCustomColor() {
-        int primaryColor = PreferencesHelper.getPrimaryColor(this);
         int darkColor = PreferencesHelper.getPrimaryDarkColor(this);
         int surfaceColor = PreferencesHelper.getSurfaceColor(this);
 
-        // Aplica a cor na StatusBar
         getWindow().setStatusBarColor(darkColor);
 
-        // Se houver um container de menu inferior, podemos pintar o fundo dele também
         View bottomNav = findViewById(R.id.floating_menu_container);
         if (bottomNav != null) {
             bottomNav.setBackgroundColor(surfaceColor);

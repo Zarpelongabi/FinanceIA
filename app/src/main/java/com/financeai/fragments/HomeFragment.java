@@ -80,7 +80,7 @@ public class HomeFragment extends Fragment {
                     .start();
                 
                 showingAnalysis = !showingAnalysis;
-                loadDashboardData(); // Recarrega com o novo estado (Análise IA)
+                loadDashboardData();
             })
             .start();
     }
@@ -89,7 +89,6 @@ public class HomeFragment extends Fragment {
         java.util.Calendar cal = java.util.Calendar.getInstance();
         int dayOfMonth = cal.get(java.util.Calendar.DAY_OF_MONTH);
         
-        // Se for dia 1, verifica se já mostramos o relatório este mês
         if (dayOfMonth == 1) {
             android.content.SharedPreferences prefs = requireContext().getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE);
             String lastReportMonth = prefs.getString("last_report_month", "");
@@ -107,7 +106,6 @@ public class HomeFragment extends Fragment {
             Context context = getContext();
             if (context == null) return;
             
-            // Pega o intervalo do mês PASSADO
             java.util.Calendar cal = java.util.Calendar.getInstance();
             cal.add(java.util.Calendar.MONTH, -1);
             cal.set(java.util.Calendar.DAY_OF_MONTH, 1);
@@ -201,13 +199,10 @@ public class HomeFragment extends Fragment {
         popup.setOnMenuItemClickListener(item -> {
             int id = item.getItemId();
             if (id == R.id.menu_settings) {
-                // Navegar para configurações
                 return true;
             } else if (id == R.id.menu_export) {
-                // Ação de exportar
                 return true;
             } else if (id == R.id.menu_about) {
-                // Ação sobre
                 return true;
             }
             return false;
@@ -224,7 +219,6 @@ public class HomeFragment extends Fragment {
 
             long[] month = SpendingAnalyzer.getMonthRange();
             
-            // BUSCA DADOS REAIS
             double totalExpensesIncludingInvestments = db.transactionDao().getTotalExpenseByPeriod(month[0], month[1]);
             double realExpensesOnly = db.transactionDao().getTotalRealExpenseByPeriod(month[0], month[1]);
             double investmentsOnly = totalExpensesIncludingInvestments - realExpensesOnly;
@@ -233,10 +227,8 @@ public class HomeFragment extends Fragment {
             double extra = context.getSharedPreferences("vortex_prefs", Context.MODE_PRIVATE).getFloat("extra", 0f);
             double totalIncome = salary + extra;
             
-            // O Saldo Disponível é a Renda menos TUDO (incluindo o que você já guardou)
             double balance = totalIncome - totalExpensesIncludingInvestments;
 
-            // 3. Recomendação Inteligente (Baseada no Total das Metas Reais)
             List<com.financeai.models.Meta> metas = db.metaDao().getAllMetasSync();
             double totalMetaEffort = 0;
             for (com.financeai.models.Meta m : metas) {
@@ -267,7 +259,7 @@ public class HomeFragment extends Fragment {
             } else if (investmentsOnly >= totalMetaEffort && totalMetaEffort > 0) {
                 statusTitle = "Meta de Aporte";
                 statusValue = "Concluída! ✅";
-                statusColor = primaryColor; // Usar a cor primária vibrante para sucesso
+                statusColor = primaryColor;
             }
 
             List<com.financeai.database.dao.TransactionDao.CategorySummary> catSummary = db.transactionDao().getCategoryExpensesSummary(month[0], month[1]);
@@ -284,7 +276,6 @@ public class HomeFragment extends Fragment {
                 if (totalIncome <= 0) aiInsight = "Defina sua renda nos cards abaixo!";
                 else if (balance < 0) aiInsight = "Cuidado! Você gastou mais do que recebeu.";
                 else if (catSummary != null && !catSummary.isEmpty()) {
-                    // Ignora investimentos na hora de apontar o "maior gasto" para não assustar
                     String topCat = "outros";
                     for(com.financeai.database.dao.TransactionDao.CategorySummary cs : catSummary) {
                         String name = cs.categoryName.toLowerCase();
@@ -320,7 +311,6 @@ public class HomeFragment extends Fragment {
                         tvSavingsStatus.setText("••••");
                     } else {
                         tvBalance.setText(balance < 0 ? "R$ 0,00" : CurrencyHelper.format(balance));
-                        // Mostra o gasto REAL (sem investimentos) para não punir quem poupa
                         tvMonthTotal.setText("-" + CurrencyHelper.format(realExpensesOnly));
                         tvSalaryValue.setText(CurrencyHelper.format(salary));
                         tvExtraIncomeValue.setText(CurrencyHelper.format(extra));
@@ -330,14 +320,12 @@ public class HomeFragment extends Fragment {
                     tvAiInsightText.setText(finalAiInsight);
                     tvFifthDay.setText("Recebe em: " + fifthDay);
 
-                    // Adiciona um indicador visual pequeno se houver investimentos
                     if (investmentsOnly > 0 && !hideBalance) {
                         tvMonthTotal.setAlpha(0.7f);
                     } else {
                         tvMonthTotal.setAlpha(1.0f);
                     }
                     
-                    // Atualiza o Label e o Status
                     if (tvLabelStatus != null) tvLabelStatus.setText(finalStatusTitle);
                     
                     if (!hideBalance) {
@@ -352,7 +340,6 @@ public class HomeFragment extends Fragment {
 
     private void observeTransactions() {
         long[] range = SpendingAnalyzer.getMonthRange();
-        // Pega um range maior (final do dia) para não perder nada
         java.util.Calendar cal = java.util.Calendar.getInstance();
         cal.set(java.util.Calendar.HOUR_OF_DAY, 23);
         cal.set(java.util.Calendar.MINUTE, 59);
@@ -366,7 +353,6 @@ public class HomeFragment extends Fragment {
 
         db.transactionDao().getTransactionsByPeriod(range[0], endOfDay).observe(getViewLifecycleOwner(), transactions -> {
             if (transactions != null) {
-                // Ordenar por valor decrescente
                 transactions.sort((t1, t2) -> Double.compare(t2.getAmount(), t1.getAmount()));
                 
                 List<com.financeai.models.Transaction> list = transactions.size() > 5 ? transactions.subList(0, 5) : transactions;
@@ -415,7 +401,9 @@ public class HomeFragment extends Fragment {
         pieChart.setCenterTextSize(14f);
         
         pieChart.getDescription().setEnabled(false);
-        pieChart.getLegend().setEnabled(false); // Remove legenda interna para poluir menos
+        pieChart.getLegend().setEnabled(false); 
+        pieChart.setNoDataText("Aguardando dados...");
+        pieChart.setNoDataTextColor(Color.WHITE);
         
         // Remove labels das fatias (mostra apenas na legenda)
         pieChart.setDrawEntryLabels(false);
@@ -443,7 +431,7 @@ public class HomeFragment extends Fragment {
         EditText input = dialogView.findViewById(R.id.et_income_value);
         Button btnSave = dialogView.findViewById(R.id.btn_save_income);
         Button btnCancel = dialogView.findViewById(R.id.btn_cancel_income);
-        TextView btnClear = dialogView.findViewById(R.id.btn_clear_income); // Agora é um TextView no novo layout
+        TextView btnClear = dialogView.findViewById(R.id.btn_clear_income);
 
         if (isSalary) {
             tvTitle.setText(R.string.my_salary);
@@ -452,7 +440,6 @@ public class HomeFragment extends Fragment {
         } else {
             tvTitle.setText(R.string.extra_income);
             tvSubtitle.setText(R.string.extra_income_subtitle);
-            // Usa o ícone de outros/lazer para renda extra se não tiver um específico
             ivIcon.setImageResource(R.drawable.outros);
         }
 
@@ -465,7 +452,6 @@ public class HomeFragment extends Fragment {
         
         if (currentVal > 0) {
             input.setText(String.valueOf(currentVal));
-            // Se já existe um valor, permite remover
             btnClear.setVisibility(View.VISIBLE);
             btnClear.setOnClickListener(v -> {
                 saveIncome(isSalary, 0);
@@ -493,22 +479,18 @@ public class HomeFragment extends Fragment {
                 .edit().putFloat("extra", (float) value).apply();
         }
 
-        // NOVO: Adiciona ou Atualiza como uma transação de entrada no banco de dados para efeito cascata
         executor.execute(() -> {
             long[] range = com.financeai.utils.SpendingAnalyzer.getMonthRange();
             String catName = isSalary ? "Salário" : "Renda Extra";
             com.financeai.models.Transaction existing = db.transactionDao().getIncomeTransaction(catName, range[0], range[1]);
 
             if (value <= 0) {
-                // Se o valor for 0, remove do histórico
                 if (existing != null) db.transactionDao().delete(existing);
             } else {
                 if (existing != null) {
-                    // Se já existe, atualiza o valor (efeito cascata)
                     existing.setAmount(value);
                     db.transactionDao().update(existing);
                 } else {
-                    // Se não existe, cria um novo
                     com.financeai.models.Transaction incomeTx = new com.financeai.models.Transaction();
                     incomeTx.setTitle(isSalary ? "Salário Mensal" : "Renda Extra");
                     incomeTx.setAmount(value);

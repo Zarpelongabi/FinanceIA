@@ -52,38 +52,11 @@
             android:exported="false"
             android:theme="@style/Theme.Vortex.Dark" />
 
-        <!-- HistoryActivity -->
-        <activity
-            android:name=".activities.HistoryActivity"
-            android:exported="false"
-            android:theme="@style/Theme.Vortex.Dark" />
-
-        <!-- CameraActivity (foto OCR) -->
-        <activity
-            android:name=".activities.CameraActivity"
-            android:exported="false"
-            android:screenOrientation="portrait" />
-
-        <!-- TransactionDetailActivity -->
-        <activity
-            android:name=".activities.TransactionDetailActivity"
-            android:exported="false" />
-
-        <!-- GoalsActivity -->
-        <activity
-            android:name=".activities.GoalsActivity"
-            android:exported="false" />
-
         <!-- InvestimentosActivity -->
         <activity
             android:name=".activities.InvestimentosActivity"
             android:exported="false"
             android:theme="@style/Theme.Vortex.Dark" />
-
-        <!-- ReportsActivity -->
-        <activity
-            android:name=".activities.ReportsActivity"
-            android:exported="false" />
 
         <!-- SettingsActivity -->
         <activity

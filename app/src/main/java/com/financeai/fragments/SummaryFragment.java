@@ -102,7 +102,6 @@ public class SummaryFragment extends Fragment {
             
             List<TransactionDao.CategorySummary> categories = db.transactionDao().getCategoryExpensesSummary(currentRange[0], currentRange[1]);
 
-            // NOVO: Filtrar categorias de investimento/reserva do resumo de gastos
             if (categories != null) {
                 categories.removeIf(cs -> {
                     String name = cs.categoryName.toLowerCase();
@@ -157,7 +156,6 @@ public class SummaryFragment extends Fragment {
                 double percent = (catSummary.total / total) * 100;
                 holder.tvDate.setText(String.format(Locale.getDefault(), "%.0f%% do total do mês", percent));
 
-                // Busca ícone personalizado
                 Category category = null;
                 for (Category c : allCategories) {
                     if (c.getName().equals(catSummary.categoryName)) {

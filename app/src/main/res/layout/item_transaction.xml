@@ -10,12 +10,11 @@
     app:cardBackgroundColor="@android:color/transparent">
 
     <LinearLayout
+        style="@style/GlassmorphicCard.Transaction"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center_vertical"
-        android:orientation="horizontal"
-        android:padding="16dp"
-        android:background="@drawable/bg_glassmorphic_card">
+        android:orientation="horizontal">
 
         <com.google.android.material.card.MaterialCardView
             android:id="@+id/card_icon_container"
@@ -31,8 +30,9 @@
                 android:id="@+id/iv_category_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="10dp"
-                android:src="@android:drawable/ic_menu_agenda" />
+                android:padding="12dp"
+                android:src="@drawable/outros"
+                app:tint="@color/white" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout

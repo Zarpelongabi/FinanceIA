@@ -24,8 +24,8 @@
     <color name="surface_dark">#1A222F</color>
     <color name="surface_card">#202B38</color>
     <color name="bg_card">#202B38</color>
-    <color name="card_light_shadow">#FFFFFF0D</color>
-    <color name="card_dark_shadow">#0000000D</color>
+    <color name="card_light_shadow">#0DFFFFFF</color>
+    <color name="card_dark_shadow">#0D000000</color>
 
     <!-- Cores de Status (Alertas) -->
     <color name="alert_danger_bg">#2D1616</color>
@@ -74,8 +74,8 @@
     <color name="info_blue">#2E5C9A</color>
     
     <!-- Transparências para Glassmorphism -->
-    <color name="glass_surface">#E8ECEF1A</color>
-    <color name="glass_border">#E8ECEF4D</color>
+    <color name="glass_surface">#1AFFFFFF</color>
+    <color name="glass_border">#33FFFFFF</color>
     
     <!-- Bottom Navigation Colors -->
     <color name="bottom_nav_active">@color/mint_medium</color>

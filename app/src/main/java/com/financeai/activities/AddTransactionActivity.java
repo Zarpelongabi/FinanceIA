@@ -34,14 +34,24 @@ public class AddTransactionActivity extends AppCompatActivity {
         spinnerCategory = findViewById(R.id.spinner_category);
         Button btnSave = findViewById(R.id.btn_save);
 
-        String[] categories = {"Alimentação", "Transporte", "Lazer", "Contas", "Saúde", "Outros"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item_eco, categories);
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        spinnerCategory.setAdapter(adapter);
+        setupCategorySpinner();
 
         findViewById(R.id.btn_back).setOnClickListener(v -> finish());
-
         btnSave.setOnClickListener(v -> saveTransaction());
+    }
+
+    private void setupCategorySpinner() {
+        db.categoryDao().getAllCategories().observe(this, categories -> {
+            if (categories != null && !categories.isEmpty()) {
+                java.util.List<String> categoryNames = new java.util.ArrayList<>();
+                for (com.financeai.models.Category c : categories) {
+                    categoryNames.add(c.getName());
+                }
+                ArrayAdapter<String> adapter = new ArrayAdapter<>(this, R.layout.spinner_item_eco, categoryNames);
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+                spinnerCategory.setAdapter(adapter);
+            }
+        });
     }
 
     private void saveTransaction() {
@@ -63,21 +73,19 @@ public class AddTransactionActivity extends AppCompatActivity {
 
         boolean isFixed = rbFixed.isChecked();
         boolean isPredicted = rbPredicted.isChecked();
-        String category = spinnerCategory.getSelectedItem().toString();
+        Object selectedItem = spinnerCategory.getSelectedItem();
+        String category = selectedItem != null ? selectedItem.toString() : "Outros";
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            // Verifica o saldo atual se não for um gasto previsto
-            if (!isPredicted) {
-                double totalIncome = db.transactionDao().getTotalIncome();
-                double totalExpense = db.transactionDao().getTotalExpense();
-                double currentBalance = totalIncome - totalExpense;
+            double totalIncome = db.transactionDao().getTotalIncome();
+            double totalExpense = db.transactionDao().getTotalExpense();
+            double currentBalance = totalIncome - totalExpense;
 
-                if (amount > currentBalance) {
-                    runOnUiThread(() -> {
-                        Toast.makeText(this, "Saldo insuficiente! Seu saldo atual é: R$ " + String.format(java.util.Locale.getDefault(), "%.2f", currentBalance), Toast.LENGTH_LONG).show();
-                    });
-                    return;
-                }
+            if (!isPredicted && amount > currentBalance) {
+                runOnUiThread(() -> {
+                    Toast.makeText(this, "Aviso: Este gasto excede seu saldo disponível (R$ " + 
+                        String.format(java.util.Locale.getDefault(), "%.2f", currentBalance) + ")", Toast.LENGTH_LONG).show();
+                });
             }
 
             Transaction transaction = new Transaction();
@@ -87,7 +95,7 @@ public class AddTransactionActivity extends AppCompatActivity {
             transaction.setRecurring(isFixed);
             transaction.setPredicted(isPredicted);
             transaction.setDate(System.currentTimeMillis());
-            transaction.setExpense(true); // Definido como gasto
+            transaction.setExpense(true);
 
             db.transactionDao().insert(transaction);
             runOnUiThread(() -> {
