@@ -26,6 +26,12 @@ public interface TransactionDao {
     @Query("SELECT * FROM transactions WHERE isPredicted = 1 ORDER BY date DESC")
     LiveData<List<Transaction>> getPredictedTransactions();
 
+    @Query("SELECT * FROM transactions WHERE isRecurring = 1 AND isPredicted = 0 GROUP BY title")
+    List<Transaction> getRecurringTransactionsBase();
+
+    @Query("SELECT COUNT(*) > 0 FROM transactions WHERE title = :title AND date BETWEEN :start AND :end")
+    boolean existsForMonth(String title, long start, long end);
+
     @Query("UPDATE transactions SET isPredicted = 0 WHERE id = :transactionId")
     void confirmPredictedExpense(int transactionId);
 

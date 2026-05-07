@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Estilos Modernos FinanceIA -->
+    
+    <!-- Tema Principal -->
+    <style name="Theme.FinanceIA" parent="Theme.MaterialComponents.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/navy_medium</item>
+        <item name="colorPrimaryVariant">@color/navy_dark</item>
+        <item name="colorSecondary">@color/mint_medium</item>
+        <item name="colorSecondaryVariant">@color/mint_dark</item>
+        <item name="colorError">@color/error_red</item>
+        <item name="colorSurface">@color/white</item>
+        <item name="colorOnPrimary">@color/white</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <item name="colorOnSurface">@color/text_dark</item>
+        
+        <!-- Tipografia -->
+        <item name="fontFamily">sans-serif</item>
+        <item name="android:textViewStyle">@style/TextViewStyle</item>
+    </style>
+    
+    <!-- Tipografia -->
+    <style name="TextViewStyle" parent="Widget.AppCompat.TextView">
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="Heading1">
+        <item name="android:textSize">32sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="Heading2">
+        <item name="android:textSize">24sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="Heading3">
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="fontFamily">sans-serif-medium</item>
+    </style>
+    
+    <style name="Body1">
+        <item name="android:textSize">16sp</item>
+        <item name="android:textColor">@color/text_dark</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="Body2">
+        <item name="android:textSize">14sp</item>
+        <item name="android:textColor">@color/dark_gray</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <style name="Caption">
+        <item name="android:textSize">12sp</item>
+        <item name="android:textColor">@color/medium_gray</item>
+        <item name="fontFamily">sans-serif</item>
+    </style>
+    
+    <!-- Componentes Card (Glassmorphism) -->
+    <style name="GlassmorphCard">
+        <item name="cardBackgroundColor">@color/glass_surface</item>
+        <item name="cardCornerRadius">20dp</item>
+        <item name="cardElevation">8dp</item>
+        <item name="cardUseCompatPadding">true</item>
+    </style>
+    
+    <!-- Botão Primário -->
+    <style name="PrimaryButton" parent="Widget.MaterialComponents.Button">
+        <item name="android:textColor">@color/white</item>
+        <item name="backgroundTint">@color/mint_medium</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textSize">16sp</item>
+        <item name="android:textStyle">bold</item>
+    </style>
+    
+    <!-- Botão Secundário -->
+    <style name="SecondaryButton" parent="Widget.MaterialComponents.Button.OutlinedButton">
+        <item name="android:textColor">@color/navy_medium</item>
+        <item name="strokeColor">@color/navy_medium</item>
+        <item name="cornerRadius">12dp</item>
+        <item name="android:textSize">16sp</item>
+    </style>
+</resources>

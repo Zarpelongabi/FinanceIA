@@ -54,13 +54,13 @@
 
                     <ImageButton
                         android:id="@+id/btn_menu"
-                        android:layout_width="52dp"
-                        android:layout_height="52dp"
+                        android:layout_width="48dp"
+                        android:layout_height="48dp"
                         android:layout_alignParentRight="true"
                         android:background="?attr/selectableItemBackgroundBorderless"
-                        android:src="@drawable/salario"
-                        android:padding="10dp"
-                        app:tint="@color/primary_eco" />
+                        android:src="@drawable/ic_settings"
+                        android:padding="12dp"
+                        app:tint="@color/text_gray" />
                 </RelativeLayout>
 
                 <!-- Card de Saldo "Vortex Glass" -->

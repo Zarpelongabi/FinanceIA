@@ -30,9 +30,9 @@
                 android:id="@+id/iv_category_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:padding="12dp"
-                android:src="@drawable/outros"
-                app:tint="@color/white" />
+                android:padding="10dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/outros" />
         </com.google.android.material.card.MaterialCardView>
 
         <LinearLayout

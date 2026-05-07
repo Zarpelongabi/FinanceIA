@@ -3,13 +3,5 @@
     <item
         android:id="@+id/menu_settings"
         android:title="Configurações"
-        android:icon="@android:drawable/ic_menu_preferences" />
-    <item
-        android:id="@+id/menu_export"
-        android:title="Exportar Relatório"
-        android:icon="@android:drawable/ic_menu_save" />
-    <item
-        android:id="@+id/menu_about"
-        android:title="Sobre o Vortex"
-        android:icon="@android:drawable/ic_menu_info_details" />
+        android:icon="@drawable/ic_settings" />
 </menu>

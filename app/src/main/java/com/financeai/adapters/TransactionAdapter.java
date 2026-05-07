@@ -65,18 +65,17 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String cat = currentTransaction.getCategoryName() != null ? currentTransaction.getCategoryName().toLowerCase() : "";
         boolean isInvestment = cat.contains("invest") || cat.contains("poup") || cat.contains("reserva");
 
+        // Limpa qualquer filtro de cor anterior para mostrar o PNG original
+        holder.imageViewIcon.setColorFilter(null);
+        holder.imageViewIcon.setImageTintList(null);
+
         if (isInvestment) {
             holder.textViewAmount.setText("-" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.invest_purple));
-            
             holder.imageViewIcon.setImageResource(R.drawable.investimento);
-            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.invest_purple)));
         } else if (currentTransaction.isExpense()) {
             holder.textViewAmount.setText("-" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.red_negative));
-            
-            // Ícone da categoria para gastos - Usamos tint branco/cinza para não conflitar com o fundo
-            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.white)));
             
             Category category = categoryMap.get(currentTransaction.getCategoryName());
             if (category != null && category.getIconPath() != null) {
@@ -85,15 +84,18 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
                     .circleCrop()
                     .into(holder.imageViewIcon);
             } else {
-                holder.imageViewIcon.setImageResource(getCategoryIcon(holder.itemView.getContext(), currentTransaction.getCategoryName()));
+                int iconRes = getCategoryIcon(holder.itemView.getContext(), currentTransaction.getCategoryName());
+                holder.imageViewIcon.setImageResource(iconRes);
+                
+                // Apenas se for o ícone genérico "outros" e não um PNG colorido, aplicamos um leve brilho
+                if (iconRes == R.drawable.outros) {
+                    holder.imageViewIcon.setColorFilter(holder.itemView.getContext().getResources().getColor(R.color.text_gray));
+                }
             }
         } else {
             holder.textViewAmount.setText("+" + CurrencyHelper.format(currentTransaction.getAmount()));
             holder.textViewAmount.setTextColor(holder.itemView.getContext().getResources().getColor(R.color.green_positive));
-            
-            // Ícone salario.png para ganhos - Aplicamos o tint Cyan (primary_eco)
             holder.imageViewIcon.setImageResource(R.drawable.salario);
-            holder.imageViewIcon.setImageTintList(android.content.res.ColorStateList.valueOf(holder.itemView.getContext().getResources().getColor(R.color.primary_eco)));
         }
 
         holder.textViewDate.setText(dateFormat.format(new Date(currentTransaction.getDate())) + " · " + currentTransaction.getCategoryName());
@@ -143,18 +145,13 @@ public class TransactionAdapter extends RecyclerView.Adapter<TransactionAdapter.
         String resName = "outros";
         if (category != null) {
             String cat = category.toLowerCase();
-            if (cat.contains("alimen") || cat.contains("mercado") || cat.contains("restaurante")) resName = "alimentacao";
-            else if (cat.contains("transp") || cat.contains("uber") || cat.contains("combustivel")) resName = "transporte";
-            else if (cat.contains("lazer") || cat.contains("cinema") || cat.contains("show") || cat.contains("viagem")) resName = "lazer";
-            else if (cat.contains("conta") || cat.contains("boleto") || cat.contains("luz") || cat.contains("agua")) resName = "contas";
-            else if (cat.contains("saúde") || cat.contains("saude") || cat.contains("farma") || cat.contains("medico")) resName = "saude";
-            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro") || cat.contains("reserva")) resName = "investimento";
-            else if (cat.contains("educa") || cat.contains("curso") || cat.contains("faculdade") || cat.contains("livro")) resName = "outros";
-            else if (cat.contains("pet") || cat.contains("dog") || cat.contains("cat")) resName = "outros";
-            else if (cat.contains("casa") || cat.contains("aluguel") || cat.contains("moveis")) resName = "outros";
-            else if (cat.contains("shop") || cat.contains("compra") || cat.contains("roupa")) resName = "outros";
-            else if (cat.contains("assin") || cat.contains("netflix") || cat.contains("spotify") || cat.contains("streaming")) resName = "outros";
-            else if (cat.contains("salário") || cat.contains("salario") || cat.contains("renda")) resName = "salario";
+            if (cat.contains("alimen") || cat.contains("mercado") || cat.contains("restaurante") || cat.contains("comida")) resName = "alimentacao";
+            else if (cat.contains("transp") || cat.contains("uber") || cat.contains("combustivel") || cat.contains("carro")) resName = "transporte";
+            else if (cat.contains("lazer") || cat.contains("cinema") || cat.contains("show") || cat.contains("viagem") || cat.contains("game")) resName = "lazer";
+            else if (cat.contains("conta") || cat.contains("boleto") || cat.contains("luz") || cat.contains("agua") || cat.contains("internet") || cat.contains("mensalidade") || cat.contains("assinatura")) resName = "contas";
+            else if (cat.contains("saúde") || cat.contains("saude") || cat.contains("farma") || cat.contains("medico") || cat.contains("hospital")) resName = "saude";
+            else if (cat.contains("invest") || cat.contains("ação") || cat.contains("acao") || cat.contains("tesouro") || cat.contains("reserva") || cat.contains("meta")) resName = "investimento";
+            else if (cat.contains("salário") || cat.contains("salario") || cat.contains("renda") || cat.contains("receita")) resName = "salario";
         }
         
         // Usa getDrawable para garantir que o sistema encontre os arquivos .png

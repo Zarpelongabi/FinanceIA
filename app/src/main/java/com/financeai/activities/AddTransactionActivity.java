@@ -93,13 +93,15 @@ public class AddTransactionActivity extends AppCompatActivity {
             transaction.setAmount(amount);
             transaction.setCategoryName(category);
             transaction.setRecurring(isFixed);
-            transaction.setPredicted(isPredicted);
+            // Se for gasto fixo, entra como previsto primeiro, conforme solicitado
+            transaction.setPredicted(isFixed || isPredicted);
             transaction.setDate(System.currentTimeMillis());
             transaction.setExpense(true);
 
             db.transactionDao().insert(transaction);
             runOnUiThread(() -> {
-                Toast.makeText(this, "Gasto salvo com sucesso!", Toast.LENGTH_SHORT).show();
+                String msg = isFixed ? "Gasto fixo agendado em 'Previstos'!" : "Gasto salvo com sucesso!";
+                Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();
                 finish();
             });
         });

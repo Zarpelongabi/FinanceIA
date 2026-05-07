@@ -14,6 +14,7 @@ import com.financeai.models.Transaction;
 import com.financeai.utils.DateHelper;
 import com.financeai.utils.PreferencesHelper;
 import java.util.Calendar;
+import java.util.List;
 import java.util.concurrent.Executors;
 
 public class MainActivity extends AppCompatActivity {
@@ -38,6 +39,44 @@ public class MainActivity extends AppCompatActivity {
         setupViewPager();
         setupMenu();
         checkAndDepositSalary();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        checkAndDepositSalary();
+        generateFixedExpensesPredictions();
+    }
+
+    private void generateFixedExpensesPredictions() {
+        Executors.newSingleThreadExecutor().execute(() -> {
+            AppDatabase db = AppDatabase.getInstance(this);
+            Calendar cal = Calendar.getInstance();
+            long[] monthRange = com.financeai.utils.SpendingAnalyzer.getMonthRange();
+            
+            // Busca gastos recorrentes (isRecurring = 1)
+            List<Transaction> recurringBase = db.transactionDao().getRecurringTransactionsBase();
+            
+            for (Transaction base : recurringBase) {
+                // Verifica se já existe uma versão "Predicted" ou "Real" para este mês e título
+                boolean exists = db.transactionDao().existsForMonth(base.getTitle(), monthRange[0], monthRange[1]);
+                
+                if (!exists) {
+                    Transaction prediction = new Transaction();
+                    prediction.setTitle(base.getTitle());
+                    prediction.setAmount(base.getAmount());
+                    prediction.setCategoryName(base.getCategoryName());
+                    prediction.setCategoryId(base.getCategoryId());
+                    prediction.setExpense(true);
+                    prediction.setPredicted(true);
+                    prediction.setRecurring(true);
+                    // Coloca na data atual ou início do mês para aparecer no previsto
+                    prediction.setDate(System.currentTimeMillis());
+                    
+                    db.transactionDao().insert(prediction);
+                }
+            }
+        });
     }
 
     private void checkAndDepositSalary() {
@@ -73,9 +112,6 @@ public class MainActivity extends AppCompatActivity {
         btnNavHistory = findViewById(R.id.btn_nav_history);
         btnNavGoals = findViewById(R.id.btn_nav_goals);
         btnNavPredicted = findViewById(R.id.btn_nav_predicted);
-
-        findViewById(R.id.btn_investments).setOnClickListener(v -> startActivity(new Intent(this, InvestimentosActivity.class)));
-        findViewById(R.id.btn_settings).setOnClickListener(v -> startActivity(new Intent(this, SettingsActivity.class)));
     }
 
     private void setupViewPager() {
@@ -142,10 +178,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void applyCustomColor() {
-        int darkColor = PreferencesHelper.getPrimaryDarkColor(this);
         int surfaceColor = PreferencesHelper.getSurfaceColor(this);
 
-        getWindow().setStatusBarColor(darkColor);
+        // Status bar preta/escura para combinar com o tema
+        getWindow().setStatusBarColor(androidx.core.content.ContextCompat.getColor(this, R.color.bg_dark));
 
         View bottomNav = findViewById(R.id.floating_menu_container);
         if (bottomNav != null) {

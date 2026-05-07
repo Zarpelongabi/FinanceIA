@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- ========== SPACING (Responsivo) ========== -->
+    <dimen name="spacing_xs">4dp</dimen>
+    <dimen name="spacing_s">8dp</dimen>
+    <dimen name="spacing_m">12dp</dimen>
+    <dimen name="spacing_l">16dp</dimen>
+    <dimen name="spacing_xl">20dp</dimen>
+    <dimen name="spacing_xxl">24dp</dimen>
+    <dimen name="spacing_huge">32dp</dimen>
+    <dimen name="spacing_massive">48dp</dimen>
+    <dimen name="screen_padding_horizontal">20dp</dimen>
+
+    <!-- ========== CARD DIMENSIONS ========== -->
+    <dimen name="card_corner_radius">16dp</dimen>
+    <dimen name="card_corner_radius_medium">20dp</dimen>
+    <dimen name="card_corner_radius_large">24dp</dimen>
+    <dimen name="card_corner_radius_xlarge">32dp</dimen>
+    <dimen name="card_corner_radius_heading">28dp</dimen>
+    <dimen name="card_padding">16dp</dimen>
+    <dimen name="card_padding_large">24dp</dimen>
+    <dimen name="card_padding_xlarge">32dp</dimen>
+    <dimen name="card_elevation">8dp</dimen>
+
+    <!-- ========== BUTTONS & NAV ========== -->
+    <dimen name="button_height">56dp</dimen>
+    <dimen name="button_height_large">64dp</dimen>
+    <dimen name="button_corner_radius">12dp</dimen>
+    <dimen name="button_corner_radius_large">22dp</dimen>
+    <dimen name="nav_menu_height">64dp</dimen>
+    <dimen name="nav_menu_margin">20dp</dimen>
+    <dimen name="bottom_nav_margin">20dp</dimen>
+    <dimen name="bottom_nav_padding">8dp</dimen>
+    <dimen name="icon_button_size">40dp</dimen>
+    <dimen name="icon_container_size">52dp</dimen>
+    <dimen name="bottom_nav_corner_radius">24dp</dimen>
+
+    <!-- ========== TEXT SIZES (Responsivo com SP) ========== -->
+    <dimen name="text_size_micro">10sp</dimen>
+    <dimen name="text_size_caption">12sp</dimen>
+    <dimen name="text_size_small">13sp</dimen>
+    <dimen name="text_size_body">14sp</dimen>
+    <dimen name="text_size_subtitle">16sp</dimen>
+    <dimen name="text_size_title">18sp</dimen>
+    <dimen name="text_size_heading">24sp</dimen>
+    <dimen name="text_size_large_heading">28sp</dimen>
+    <dimen name="text_size_display">32sp</dimen>
+    <dimen name="text_size_display_large">38sp</dimen>
+
+    <!-- ========== CHARTS & IMAGES ========== -->
+    <dimen name="chart_height">220dp</dimen>
+    <dimen name="progress_chart_size">100dp</dimen>
+    <dimen name="profile_image_size">52dp</dimen>
+</resources>
